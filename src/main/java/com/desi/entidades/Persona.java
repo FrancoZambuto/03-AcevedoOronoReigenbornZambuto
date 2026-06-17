@@ -30,6 +30,8 @@ public class Persona {
 
 	private String domicilio;
 
+	private boolean eliminada;
+
 	@OneToMany(mappedBy = "propietario")
 	private List<Propiedad> propiedades = new ArrayList<>();
 
@@ -40,7 +42,7 @@ public class Persona {
 	}
 
 	public Persona(Long id, String nombre, String apellido, String dniCuit, String telefono, String email,
-			String domicilio) {
+			String domicilio, boolean eliminada) {
 		this.id = id;
 		this.nombre = nombre;
 		this.apellido = apellido;
@@ -48,6 +50,7 @@ public class Persona {
 		this.telefono = telefono;
 		this.email = email;
 		this.domicilio = domicilio;
+		this.eliminada = eliminada;
 	}
 
 	public Long getId() {
@@ -104,6 +107,14 @@ public class Persona {
 
 	public void setDomicilio(String domicilio) {
 		this.domicilio = domicilio;
+	}
+
+	public boolean isEliminada() {
+		return eliminada;
+	}
+
+	public void setEliminada(boolean eliminada) {
+		this.eliminada = eliminada;
 	}
 
 	public List<Propiedad> getPropiedades() {
