@@ -87,6 +87,11 @@ public class ContratoServiceImpl implements ContratoService {
 		return personaRepository.listarActivas();
 	}
 
+	@Override
+	public List<Contrato> obtenerActivos() {
+		return contratoRepository.listarActivos();
+	}
+
 	private void validarActivacionContrato(Propiedad propiedad) {
 		if (propiedad.getEstadoDisponibilidad() != EstadoDisponibilidad.DISPONIBLE) {
 			throw new IllegalArgumentException("No se puede crear un contrato activo si la propiedad no está disponible");

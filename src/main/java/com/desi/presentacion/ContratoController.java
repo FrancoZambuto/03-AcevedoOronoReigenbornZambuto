@@ -22,6 +22,12 @@ public class ContratoController {
 	@Autowired
 	private ContratoService contratoService;
 
+	@GetMapping("/listado")
+	public String listado(Model model) {
+		model.addAttribute("contratos", contratoService.obtenerActivos());
+		return "listadoContratos";
+	}
+
 	@GetMapping("/alta")
 	public String preparaForm(Model model, @RequestParam(required = false) Boolean exito) {
 		model.addAttribute("contratoForm", new ContratoForm());

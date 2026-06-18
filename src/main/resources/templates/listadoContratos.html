@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<title>Listado de Contratos</title>
+	<style>
+		table {
+			border-collapse: collapse;
+		}
+
+		table th, table td {
+			border: 1px solid #000;
+			padding: 8px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Listado de Contratos</h1>
+
+	<a href="/contrato/alta">Nuevo Contrato</a>
+
+	<p th:if="${contratos.isEmpty()}">No hay contratos registrados</p>
+
+	<table th:unless="${contratos.isEmpty()}">
+		<thead>
+			<tr>
+				<th>Propiedad</th>
+				<th>Inquilino</th>
+				<th>Fecha Inicio</th>
+				<th>Duración (meses)</th>
+				<th>Importe Mensual</th>
+				<th>Día Vencimiento</th>
+				<th>Estado</th>
+				<th>Descripción</th>
+				<th>Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="contrato : ${contratos}">
+				<td th:text="${contrato.propiedad.direccion + ' - ' + contrato.propiedad.ciudad.nombre}"></td>
+				<td th:text="${contrato.inquilino.apellido + ', ' + contrato.inquilino.nombre}"></td>
+				<td th:text="${#temporals.format(contrato.fechaInicio, 'dd/MM/yyyy')}"></td>
+				<td th:text="${contrato.duracionMeses}"></td>
+				<td th:text="${#numbers.formatDecimal(contrato.importeMensual, 1, 2)}"></td>
+				<td th:text="${contrato.diaVencimientoMensual}"></td>
+				<td th:text="${contrato.estado}"></td>
+				<td th:text="${contrato.descripcion}"></td>
+				<td>
+					<a href="#">Editar</a>
+					<a href="#">Eliminar</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

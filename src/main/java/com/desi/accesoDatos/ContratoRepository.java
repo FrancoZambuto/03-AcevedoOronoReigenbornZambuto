@@ -1,5 +1,6 @@
 package com.desi.accesoDatos;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +25,11 @@ public interface ContratoRepository extends JpaRepository<Contrato, Long> {
 		  AND c.eliminado = false
 	""")
     Optional<Contrato> buscarPorIdNoEliminado(@Param("id") Long id);
+
+    @Query("""
+		SELECT c
+		FROM Contrato c
+		WHERE c.eliminado = false
+	""")
+    List<Contrato> listarActivos();
 }
