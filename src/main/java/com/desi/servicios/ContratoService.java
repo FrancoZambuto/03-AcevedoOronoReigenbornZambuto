@@ -11,6 +11,8 @@ public interface ContratoService {
 
 	void registrar(ContratoForm form);
 
+	void eliminar(Long id);
+
 	List<Propiedad> obtenerPropiedadesDisponibles();
 
 	List<Persona> obtenerInquilinos();

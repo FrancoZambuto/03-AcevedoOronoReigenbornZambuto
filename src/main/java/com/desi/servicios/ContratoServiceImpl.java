@@ -88,6 +88,20 @@ public class ContratoServiceImpl implements ContratoService {
 	}
 
 	@Override
+	@Transactional
+	public void eliminar(Long id) {
+		Contrato contrato = contratoRepository.buscarPorIdNoEliminado(id)
+				.orElseThrow(() -> new IllegalArgumentException("Contrato no encontrado"));
+
+		if (contrato.getEstado() != EstadoContrato.BORRADOR) {
+			throw new IllegalArgumentException("Solo se pueden eliminar contratos en estado BORRADOR");
+		}
+
+		contrato.setEliminado(true);
+		contratoRepository.save(contrato);
+	}
+
+	@Override
 	public List<Contrato> obtenerActivos() {
 		return contratoRepository.listarActivos();
 	}
