@@ -5,16 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "CONTRATO")
@@ -53,7 +44,7 @@ public class Contrato {
 	@OneToMany(mappedBy = "contrato")
 	private List<Incidente> incidentes = new ArrayList<>();
 
-	@OneToMany(mappedBy = "contrato")
+	@OneToMany(mappedBy = "contrato", cascade = CascadeType.ALL)
 	private List<HistorialEstadoContrato> historialEstados = new ArrayList<>();
 
 	public Contrato() {

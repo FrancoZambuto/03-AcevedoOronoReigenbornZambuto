@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{contrato.alta.titulo}">Alta de Contrato</title>
+    <style>
+        form .campo {
+            margin-bottom: 12px;
+        }
+
+        form .campo label {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        form .campo input,
+        form .campo select,
+        form .campo textarea {
+            display: block;
+        }
+
+        form .campo span {
+            display: block;
+            margin-top: 4px;
+            color: #b00020;
+        }
+
+        form button {
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<h1 th:text="#{contrato.alta.titulo}">Alta de Contrato</h1>
+
+<p th:if="${mensajeExito}" th:text="#{contrato.alta.exito}">Contrato registrado correctamente</p>
+
+<form th:action="@{/contrato/alta}" th:object="${contratoForm}" method="post">
+
+    <div class="campo">
+        <label for="propiedadId" th:text="#{contrato.propiedad}">Propiedad</label>
+        <select id="propiedadId" th:field="*{propiedadId}">
+            <option value="" th:text="#{contrato.seleccionar}">Seleccione</option>
+            <option th:each="p : ${allPropiedades}"
+                    th:value="${p.id}"
+                    th:text="${p.direccion + ' - ' + p.ciudad.nombre}">
+            </option>
+        </select>
+        <span th:if="${#fields.hasErrors('propiedadId')}" th:errors="*{propiedadId}"></span>
+    </div>
+
+    <div class="campo">
+        <label for="inquilinoId" th:text="#{contrato.inquilino}">Inquilino</label>
+        <select id="inquilinoId" th:field="*{inquilinoId}">
+            <option value="" th:text="#{contrato.seleccionar}">Seleccione</option>
+            <option th:each="i : ${allInquilinos}"
+                    th:value="${i.id}"
+                    th:text="${i.apellido + ', ' + i.nombre}">
+            </option>
+        </select>
+        <span th:if="${#fields.hasErrors('inquilinoId')}" th:errors="*{inquilinoId}"></span>
+    </div>
+
+    <div class="campo">
+        <label for="fechaInicio" th:text="#{contrato.fechaInicio}">Fecha de inicio</label>
+        <input type="date" id="fechaInicio" th:field="*{fechaInicio}"/>
+        <span th:if="${#fields.hasErrors('fechaInicio')}" th:errors="*{fechaInicio}"></span>
+    </div>
+
+    <div class="campo">
+        <label for="duracionMeses" th:text="#{contrato.duracionMeses}">Duración en meses</label>
+        <input type="number" id="duracionMeses" th:field="*{duracionMeses}"/>
+        <span th:if="${#fields.hasErrors('duracionMeses')}" th:errors="*{duracionMeses}"></span>
+    </div>
+
+    <div class="campo">
+        <label for="importeMensual" th:text="#{contrato.importeMensual}">Importe mensual</label>
+        <input type="number" step="0.01" id="importeMensual" th:field="*{importeMensual}"/>
+        <span th:if="${#fields.hasErrors('importeMensual')}" th:errors="*{importeMensual}"></span>
+    </div>
+
+    <div class="campo">
+        <label for="diaVencimientoMensual" th:text="#{contrato.diaVencimientoMensual}">Día de vencimiento mensual</label>
+        <input type="number" id="diaVencimientoMensual" th:field="*{diaVencimientoMensual}"/>
+        <span th:if="${#fields.hasErrors('diaVencimientoMensual')}" th:errors="*{diaVencimientoMensual}"></span>
+    </div>
+
+    <div class="campo">
+        <label for="descripcion" th:text="#{contrato.descripcion}">Descripción</label>
+        <textarea id="descripcion" th:field="*{descripcion}"></textarea>
+        <span th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></span>
+    </div>
+
+    <div class="campo">
+        <label for="estado" th:text="#{contrato.estado}">Estado del contrato</label>
+        <select id="estado" th:field="*{estado}">
+            <option value="" th:text="#{contrato.estado.default}">Borrador por defecto</option>
+            <option th:each="e : ${estadosContrato}" th:value="${e}" th:text="${e}"></option>
+        </select>
+        <span th:if="${#fields.hasErrors('estado')}" th:errors="*{estado}"></span>
+    </div>
+
+    <div th:if="${#fields.hasGlobalErrors()}">
+        <p th:each="e : ${#fields.globalErrors()}" th:text="${e}"></p>
+    </div>
+
+    <button type="submit" th:text="#{contrato.submit}">Registrar Contrato</button>
+</form>
+</body>
+</html>
