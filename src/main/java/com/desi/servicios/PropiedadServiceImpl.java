@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.desi.accesoDatos.CiudadRepository;
+import com.desi.accesoDatos.ContratoRepository;
 import com.desi.accesoDatos.PersonaRepository;
 import com.desi.accesoDatos.PropiedadRepository;
 import com.desi.entidades.Ciudad;
@@ -15,6 +16,7 @@ import com.desi.entidades.EstadoDisponibilidad;
 import com.desi.entidades.HistorialEstadoPropiedad;
 import com.desi.entidades.Persona;
 import com.desi.entidades.Propiedad;
+import com.desi.excepciones.PropiedadConContratoActivoException;
 import com.desi.excepciones.PropiedadDuplicadaException;
 import com.desi.presentacion.PropiedadForm;
 
@@ -30,6 +32,9 @@ public class PropiedadServiceImpl implements PropiedadService {
 	@Autowired
 	private CiudadRepository ciudadRepository;
 
+	@Autowired
+	private ContratoRepository contratoRepository;
+
 	@Override
 	@Transactional
 	public void registrar(PropiedadForm form) {
@@ -43,11 +48,11 @@ public class PropiedadServiceImpl implements PropiedadService {
 		Ciudad ciudad = ciudadRepository.findById(form.getCiudadId())
 				.orElseThrow(() -> new IllegalArgumentException("Ciudad no encontrada"));
 
-		if (propiedadRepository.existsByDireccionAndCiudadAndEliminadaFalse(form.getDireccion(), ciudad)) {
+		if (propiedadRepository.existeActivaPorDireccionYCiudad(form.getDireccion(), ciudad)) {
 			throw new PropiedadDuplicadaException("Ya existe una propiedad activa con la misma direccion y ciudad");
 		}
 
-		Persona propietario = personaRepository.findByIdAndEliminadaFalse(form.getPropietarioId())
+		Persona propietario = personaRepository.buscarActivaPorId(form.getPropietarioId())
 				.orElseThrow(() -> new IllegalArgumentException("Propietario no encontrado o no disponible"));
 
 		Propiedad propiedad = new Propiedad();
@@ -72,8 +77,40 @@ public class PropiedadServiceImpl implements PropiedadService {
 	}
 
 	@Override
+	@Transactional
+	public void eliminar(Long id) {
+		Propiedad propiedad = propiedadRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Propiedad no encontrada"));
+
+		if (propiedad.isEliminada()) {
+			throw new IllegalArgumentException("La propiedad ya se encuentra eliminada");
+		}
+
+		if (contratoRepository.tieneContratoActivo(id)) {
+			throw new PropiedadConContratoActivoException(
+					"No se puede eliminar la propiedad porque tiene un contrato activo vigente");
+		}
+
+		propiedad.setEliminada(true);
+		propiedad.setEstadoDisponibilidad(EstadoDisponibilidad.INACTIVA);
+
+		HistorialEstadoPropiedad historial = new HistorialEstadoPropiedad();
+		historial.setEstado(EstadoDisponibilidad.INACTIVA);
+		historial.setFechaHora(LocalDateTime.now());
+		historial.setPropiedad(propiedad);
+		propiedad.getHistorialEstados().add(historial);
+
+		propiedadRepository.save(propiedad);
+	}
+
+	@Override
+	public List<Propiedad> obtenerActivas() {
+		return propiedadRepository.listarActivas();
+	}
+
+	@Override
 	public List<Persona> obtenerPropietarios() {
-		return personaRepository.findByEliminadaFalse();
+		return personaRepository.listarActivas();
 	}
 
 	@Override
