@@ -4,12 +4,16 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.desi.entidades.Persona;
 
 public interface PersonaRepository extends JpaRepository<Persona, Long> {
 
-	List<Persona> findByEliminadaFalse();
+	@Query("SELECT p FROM Persona p WHERE p.eliminada = false")
+	List<Persona> listarActivas();
 
-	Optional<Persona> findByIdAndEliminadaFalse(Long id);
+	@Query("SELECT p FROM Persona p WHERE p.id = :id AND p.eliminada = false")
+	Optional<Persona> buscarActivaPorId(@Param("id") Long id);
 }
