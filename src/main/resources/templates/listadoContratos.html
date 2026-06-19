@@ -118,7 +118,9 @@
 				<td th:text="${contrato.diaVencimientoMensual}"></td>
 				<td th:text="${contrato.estado}"></td>
 				<td>
-					<a th:href="@{/contrato/{id}/editar(id=${contrato.id})}">Editar</a>
+					<form th:action="@{/contrato/{id}/editar(id=${contrato.id})}" method="get" style="display: inline;">
+						<button type="submit">Editar</button>
+					</form>
 					<form th:action="@{/contrato/{id}/eliminar(id=${contrato.id})}" method="post" style="display: inline;">
 						<button type="submit">Eliminar</button>
 					</form>

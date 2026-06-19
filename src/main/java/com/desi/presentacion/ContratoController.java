@@ -92,7 +92,8 @@ public class ContratoController {
 	public String submitEdicion(@PathVariable Long id,
 								@Valid @ModelAttribute("contratoForm") ContratoForm contratoForm,
 								BindingResult result,
-								Model model) {
+								Model model,
+								RedirectAttributes redirectAttributes) {
 
 		if (result.hasErrors()) {
 			Contrato contrato = contratoService.obtenerPorId(id);
@@ -113,7 +114,8 @@ public class ContratoController {
 			return "editarContrato";
 		}
 
-		return "redirect:/contrato/" + id + "/editar?exito=true";
+		redirectAttributes.addFlashAttribute("mensajeExito", true);
+		return "redirect:/contrato/listado";
 	}
 
 	@PostMapping("/{id}/eliminar")
