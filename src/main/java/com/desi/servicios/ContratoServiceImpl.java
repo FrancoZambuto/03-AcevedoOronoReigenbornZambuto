@@ -1,6 +1,7 @@
 package com.desi.servicios;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -104,6 +105,11 @@ public class ContratoServiceImpl implements ContratoService {
 	@Override
 	public List<Contrato> obtenerActivos() {
 		return contratoRepository.listarActivos();
+	}
+
+	@Override
+	public List<Contrato> filtrar(Long propiedadId, Long inquilinoId, EstadoContrato estado, LocalDate fechaInicio) {
+		return contratoRepository.filtrar(propiedadId, inquilinoId, estado, fechaInicio);
 	}
 
 	private void validarActivacionContrato(Propiedad propiedad) {

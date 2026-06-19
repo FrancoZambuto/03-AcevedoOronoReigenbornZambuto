@@ -109,6 +109,11 @@ public class PropiedadServiceImpl implements PropiedadService {
 	}
 
 	@Override
+	public List<Propiedad> obtenerTodasActivas() {
+		return propiedadRepository.listarActivas();
+	}
+
+	@Override
 	public List<Persona> obtenerPropietarios() {
 		return personaRepository.listarActivas();
 	}

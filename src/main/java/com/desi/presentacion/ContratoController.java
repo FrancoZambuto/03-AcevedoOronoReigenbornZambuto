@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.desi.entidades.Contrato;
 import com.desi.entidades.EstadoContrato;
 import com.desi.servicios.ContratoService;
+import com.desi.servicios.PropiedadService;
 
 import jakarta.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/contrato")
@@ -24,9 +27,38 @@ public class ContratoController {
 	@Autowired
 	private ContratoService contratoService;
 
+	@Autowired
+	private PropiedadService propiedadService;
+
 	@GetMapping("/listado")
-	public String listado(Model model) {
-		model.addAttribute("contratos", contratoService.obtenerActivos());
+	public String listado(
+			@RequestParam(required = false) Long propiedadId,
+			@RequestParam(required = false) Long inquilinoId,
+			@RequestParam(required = false) EstadoContrato estado,
+			@RequestParam(required = false) String fechaInicio,
+			Model model) {
+
+		java.time.LocalDate fecha = null;
+		if (fechaInicio != null && !fechaInicio.isBlank()) {
+			fecha = java.time.LocalDate.parse(fechaInicio);
+		}
+
+		List<Contrato> contratos;
+		if (propiedadId != null || inquilinoId != null || estado != null || fecha != null) {
+			contratos = contratoService.filtrar(propiedadId, inquilinoId, estado, fecha);
+		} else {
+			contratos = contratoService.obtenerActivos();
+		}
+
+		model.addAttribute("contratos", contratos);
+		model.addAttribute("propiedadIdFiltro", propiedadId);
+		model.addAttribute("inquilinoIdFiltro", inquilinoId);
+		model.addAttribute("estadoFiltro", estado);
+		model.addAttribute("fechaInicioFiltro", fechaInicio);
+		model.addAttribute("allPropiedades", propiedadService.obtenerTodasActivas());
+		model.addAttribute("allInquilinos", contratoService.obtenerInquilinos());
+		model.addAttribute("estadosContrato", EstadoContrato.values());
+
 		return "listadoContratos";
 	}
 

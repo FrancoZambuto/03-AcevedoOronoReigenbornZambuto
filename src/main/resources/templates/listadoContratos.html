@@ -12,6 +12,24 @@
 			border: 1px solid #000;
 			padding: 8px;
 		}
+
+		.filtros {
+			margin-bottom: 20px;
+		}
+
+		.filtros div {
+			margin-bottom: 10px;
+		}
+
+		.filtros label {
+			display: inline-block;
+			width: 150px;
+		}
+
+		.filtros input,
+		.filtros select {
+			padding: 5px;
+		}
 	</style>
 </head>
 <body>
@@ -22,32 +40,83 @@
 	<p th:if="${mensajeExito}">Contrato eliminado correctamente</p>
 	<p th:if="${mensajeError}" th:text="${mensajeError}"></p>
 
+	<div class="filtros">
+		<h3>Filtros</h3>
+		<form th:action="@{/contrato/listado}" method="get">
+			<div>
+				<label for="propiedadId">Propiedad:</label>
+				<select id="propiedadId" name="propiedadId">
+					<option value="">Todas</option>
+					<option th:each="p : ${allPropiedades}"
+							th:value="${p.id}"
+							th:text="${p.direccion + ' - ' + p.ciudad.nombre}"
+							th:selected="${propiedadIdFiltro == p.id}">
+					</option>
+				</select>
+			</div>
+
+			<div>
+				<label for="inquilinoId">Inquilino:</label>
+				<select id="inquilinoId" name="inquilinoId">
+					<option value="">Todos</option>
+					<option th:each="i : ${allInquilinos}"
+							th:value="${i.id}"
+							th:text="${i.apellido + ', ' + i.nombre}"
+							th:selected="${inquilinoIdFiltro == i.id}">
+					</option>
+				</select>
+			</div>
+
+			<div>
+				<label for="estado">Estado:</label>
+				<select id="estado" name="estado">
+					<option value="">Todos</option>
+					<option th:each="e : ${estadosContrato}"
+							th:value="${e}"
+							th:text="${e}"
+							th:selected="${estadoFiltro == e}">
+					</option>
+				</select>
+			</div>
+
+			<div>
+				<label for="fechaInicio">Fecha de inicio:</label>
+				<input type="date" id="fechaInicio" name="fechaInicio" th:value="${fechaInicioFiltro}"/>
+			</div>
+
+			<div>
+				<button type="submit">Filtrar</button>
+				<a href="/contrato/listado">Limpiar filtros</a>
+			</div>
+		</form>
+	</div>
+
 	<p th:if="${contratos.isEmpty()}">No hay contratos registrados</p>
 
 	<table th:unless="${contratos.isEmpty()}">
 		<thead>
 			<tr>
+				<th>ID</th>
 				<th>Propiedad</th>
+				<th>Propietario</th>
 				<th>Inquilino</th>
 				<th>Fecha Inicio</th>
-				<th>Duración (meses)</th>
 				<th>Importe Mensual</th>
 				<th>Día Vencimiento</th>
 				<th>Estado</th>
-				<th>Descripción</th>
 				<th>Acciones</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr th:each="contrato : ${contratos}">
+				<td th:text="${contrato.id}"></td>
 				<td th:text="${contrato.propiedad.direccion + ' - ' + contrato.propiedad.ciudad.nombre}"></td>
+				<td th:text="${contrato.propiedad.propietario.apellido + ', ' + contrato.propiedad.propietario.nombre}"></td>
 				<td th:text="${contrato.inquilino.apellido + ', ' + contrato.inquilino.nombre}"></td>
 				<td th:text="${#temporals.format(contrato.fechaInicio, 'dd/MM/yyyy')}"></td>
-				<td th:text="${contrato.duracionMeses}"></td>
 				<td th:text="${#numbers.formatDecimal(contrato.importeMensual, 1, 2)}"></td>
 				<td th:text="${contrato.diaVencimientoMensual}"></td>
 				<td th:text="${contrato.estado}"></td>
-				<td th:text="${contrato.descripcion}"></td>
 				<td>
 					<a href="#">Editar</a>
 					<form th:action="@{/contrato/{id}/eliminar(id=${contrato.id})}" method="post" style="display: inline;">

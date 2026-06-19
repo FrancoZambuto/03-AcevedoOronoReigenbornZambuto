@@ -15,6 +15,8 @@ public interface PropiedadService {
 
 	List<Propiedad> obtenerActivas();
 
+	List<Propiedad> obtenerTodasActivas();
+
 	List<Persona> obtenerPropietarios();
 
 	List<Ciudad> obtenerCiudades();
