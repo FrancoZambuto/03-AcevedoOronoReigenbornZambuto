@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<title th:text="#{propiedad.editar.titulo}">Modificar Propiedad</title>
+	<style>
+		form .campo {
+			margin-bottom: 12px;
+		}
+
+		form .campo label {
+			display: block;
+			margin-bottom: 4px;
+		}
+
+		form .campo input,
+		form .campo select,
+		form .campo textarea {
+			display: block;
+		}
+
+		form .campo span {
+			display: block;
+			margin-top: 4px;
+			color: #b00020;
+		}
+
+		form .acciones {
+			margin-top: 12px;
+		}
+
+		form .acciones a {
+			margin-left: 12px;
+		}
+	</style>
+</head>
+<body>
+	<h1 th:text="#{propiedad.editar.titulo}">Modificar Propiedad</h1>
+
+	<p th:if="${mensajeExito}" class="mensaje-exito" th:text="#{propiedad.editar.exito}"></p>
+
+	<form th:action="@{/propiedad/{id}/editar(id=${propiedadId})}" th:object="${propiedadForm}" method="post">
+
+		<div class="campo">
+			<label for="id" th:text="#{propiedad.listado.id}">Id</label>
+			<input type="text" id="id" th:field="*{id}" readonly="readonly"/>
+		</div>
+
+		<div class="campo">
+			<label for="direccion" th:text="#{propiedad.direccion}">Direccion</label>
+			<input type="text" id="direccion" th:field="*{direccion}"/>
+			<span th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="tipo" th:text="#{propiedad.tipo}">Tipo de propiedad</label>
+			<select id="tipo" th:field="*{tipo}">
+				<option value="" th:text="#{propiedad.seleccionar}"></option>
+				<option th:each="t : ${tiposPropiedad}" th:value="${t}" th:text="${t}"></option>
+			</select>
+			<span th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="cantidadAmbientes" th:text="#{propiedad.cantidadAmbientes}">Cantidad de ambientes</label>
+			<input type="number" id="cantidadAmbientes" th:field="*{cantidadAmbientes}"/>
+			<span th:if="${#fields.hasErrors('cantidadAmbientes')}" th:errors="*{cantidadAmbientes}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="metrosCuadrados" th:text="#{propiedad.metrosCuadrados}">Metros cuadrados</label>
+			<input type="number" step="0.01" id="metrosCuadrados" th:field="*{metrosCuadrados}"/>
+			<span th:if="${#fields.hasErrors('metrosCuadrados')}" th:errors="*{metrosCuadrados}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="descripcion" th:text="#{propiedad.descripcion}">Descripcion</label>
+			<textarea id="descripcion" th:field="*{descripcion}"></textarea>
+			<span th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="comodidades" th:text="#{propiedad.comodidades}">Comodidades</label>
+			<textarea id="comodidades" th:field="*{comodidades}"></textarea>
+			<span th:if="${#fields.hasErrors('comodidades')}" th:errors="*{comodidades}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="estadoDisponibilidad" th:text="#{propiedad.estadoDisponibilidad}">Estado de disponibilidad</label>
+			<select id="estadoDisponibilidad" th:field="*{estadoDisponibilidad}">
+				<option value="" th:text="#{propiedad.seleccionar}"></option>
+				<option th:each="e : ${estadosDisponibilidad}" th:value="${e}" th:text="${e}"></option>
+			</select>
+			<span th:if="${#fields.hasErrors('estadoDisponibilidad')}" th:errors="*{estadoDisponibilidad}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="ciudadId" th:text="#{propiedad.ciudad}">Ciudad</label>
+			<select id="ciudadId" th:field="*{ciudadId}">
+				<option value="" th:text="#{propiedad.seleccionar}"></option>
+				<option th:each="c : ${allCiudades}" th:value="${c.id}" th:text="${c.nombre}"></option>
+			</select>
+			<span th:if="${#fields.hasErrors('ciudadId')}" th:errors="*{ciudadId}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="propietarioId" th:text="#{propiedad.propietario}">Propietario</label>
+			<select id="propietarioId" th:field="*{propietarioId}">
+				<option value="" th:text="#{propiedad.seleccionar}"></option>
+				<option th:each="p : ${allPropietarios}" th:value="${p.id}"
+					th:text="${p.apellido + ', ' + p.nombre}"></option>
+			</select>
+			<span th:if="${#fields.hasErrors('propietarioId')}" th:errors="*{propietarioId}"></span>
+		</div>
+
+		<div th:if="${#fields.hasGlobalErrors()}">
+			<p th:each="e : ${#fields.globalErrors()}" th:text="${e}"></p>
+		</div>
+
+		<div class="acciones">
+			<button type="submit" th:text="#{propiedad.editar.submit}">Guardar cambios</button>
+			<a th:href="@{/propiedad/listado}" th:text="#{propiedad.editar.volver}">Volver al listado</a>
+		</div>
+	</form>
+</body>
+</html>

@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Positive;
 
 public class PropiedadForm {
 
+	private Long id;
+
 	@NotEmpty(message = "{propiedad.direccion.notEmpty}")
 	private String direccion;
 
@@ -38,6 +40,14 @@ public class PropiedadForm {
 	private Long propietarioId;
 
 	public PropiedadForm() {
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getDireccion() {

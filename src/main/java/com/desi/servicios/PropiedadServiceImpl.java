@@ -16,6 +16,7 @@ import com.desi.entidades.EstadoDisponibilidad;
 import com.desi.entidades.HistorialEstadoPropiedad;
 import com.desi.entidades.Persona;
 import com.desi.entidades.Propiedad;
+import com.desi.excepciones.EstadoPropiedadBloqueadoException;
 import com.desi.excepciones.PropiedadConContratoActivoException;
 import com.desi.excepciones.PropiedadDuplicadaException;
 import com.desi.presentacion.PropiedadFiltroForm;
@@ -73,6 +74,77 @@ public class PropiedadServiceImpl implements PropiedadService {
 		historial.setFechaHora(LocalDateTime.now());
 		historial.setPropiedad(propiedad);
 		propiedad.getHistorialEstados().add(historial);
+
+		propiedadRepository.save(propiedad);
+	}
+
+	@Override
+	public PropiedadForm buscarParaEdicion(Long id) {
+		Propiedad propiedad = propiedadRepository.buscarPorIdNoEliminada(id)
+				.orElseThrow(() -> new IllegalArgumentException("Propiedad no encontrada"));
+
+		PropiedadForm form = new PropiedadForm();
+		form.setId(propiedad.getId());
+		form.setDireccion(propiedad.getDireccion());
+		form.setTipo(propiedad.getTipo());
+		form.setCantidadAmbientes(propiedad.getCantidadAmbientes());
+		form.setMetrosCuadrados(propiedad.getMetrosCuadrados());
+		form.setDescripcion(propiedad.getDescripcion());
+		form.setComodidades(propiedad.getComodidades());
+		form.setEstadoDisponibilidad(propiedad.getEstadoDisponibilidad());
+		form.setCiudadId(propiedad.getCiudad().getId());
+		form.setPropietarioId(propiedad.getPropietario().getId());
+		return form;
+	}
+
+	@Override
+	@Transactional
+	public void actualizar(Long id, PropiedadForm form) {
+		validarCampos(form);
+
+		Propiedad propiedad = propiedadRepository.buscarPorIdNoEliminada(id)
+				.orElseThrow(() -> new IllegalArgumentException("Propiedad no encontrada"));
+
+		if (form.getEstadoDisponibilidad() == null) {
+			throw new IllegalArgumentException("El estado de disponibilidad es obligatorio");
+		}
+
+		Ciudad ciudad = ciudadRepository.findById(form.getCiudadId())
+				.orElseThrow(() -> new IllegalArgumentException("Ciudad no encontrada"));
+
+		if (propiedadRepository.existeActivaPorDireccionYCiudadExcluyendoId(form.getDireccion(), ciudad, id)) {
+			throw new PropiedadDuplicadaException("Ya existe una propiedad activa con la misma direccion y ciudad");
+		}
+
+		EstadoDisponibilidad nuevoEstado = form.getEstadoDisponibilidad();
+		if (contratoRepository.tieneContratoActivo(id)
+				&& (nuevoEstado == EstadoDisponibilidad.DISPONIBLE || nuevoEstado == EstadoDisponibilidad.INACTIVA)) {
+			throw new EstadoPropiedadBloqueadoException(
+					"No se puede cambiar el estado a disponible o inactiva mientras exista un contrato activo vigente");
+		}
+
+		Persona propietario = personaRepository.buscarActivaPorId(form.getPropietarioId())
+				.orElseThrow(() -> new IllegalArgumentException("Propietario no encontrado o no disponible"));
+
+		EstadoDisponibilidad estadoAnterior = propiedad.getEstadoDisponibilidad();
+
+		propiedad.setDireccion(form.getDireccion());
+		propiedad.setTipo(form.getTipo());
+		propiedad.setCantidadAmbientes(form.getCantidadAmbientes());
+		propiedad.setMetrosCuadrados(form.getMetrosCuadrados());
+		propiedad.setDescripcion(form.getDescripcion());
+		propiedad.setComodidades(form.getComodidades());
+		propiedad.setEstadoDisponibilidad(nuevoEstado);
+		propiedad.setCiudad(ciudad);
+		propiedad.setPropietario(propietario);
+
+		if (!nuevoEstado.equals(estadoAnterior)) {
+			HistorialEstadoPropiedad historial = new HistorialEstadoPropiedad();
+			historial.setEstado(nuevoEstado);
+			historial.setFechaHora(LocalDateTime.now());
+			historial.setPropiedad(propiedad);
+			propiedad.getHistorialEstados().add(historial);
+		}
 
 		propiedadRepository.save(propiedad);
 	}

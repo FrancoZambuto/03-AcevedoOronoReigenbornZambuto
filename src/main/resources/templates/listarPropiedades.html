@@ -72,6 +72,7 @@
 	<h1 th:text="#{propiedad.listado.titulo}">Listado de Propiedades</h1>
 
 	<p th:if="${mensajeExito}" class="mensaje-exito" th:text="#{propiedad.baja.exito}"></p>
+	<p th:if="${mensajeEdicionExito}" class="mensaje-exito" th:text="#{propiedad.editar.exito}"></p>
 	<p th:if="${mensajeError}" class="mensaje-error" th:text="${mensajeError}"></p>
 
 	<form class="filtros" th:action="@{/propiedad/listado}" th:object="${filtro}" method="get">
