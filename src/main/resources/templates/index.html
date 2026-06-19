@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<title th:text="#{home.titulo}">HogarYA</title>
+	<link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body class="pagina-inicio">
+	<header class="encabezado">
+		<h1 th:text="#{home.titulo}">HogarYA</h1>
+		<p class="subtitulo" th:text="#{home.subtitulo}">Sistema de gestion inmobiliaria</p>
+	</header>
+
+	<main class="contenido">
+		<section class="bienvenida">
+			<h2 th:text="#{home.bienvenida.titulo}">Bienvenido</h2>
+			<p th:text="#{home.bienvenida.texto}">Seleccione una seccion para continuar.</p>
+		</section>
+
+		<nav class="menu-navegacion" aria-label="Menu principal">
+			<h2 class="menu-titulo" th:text="#{home.menu.titulo}">Navegacion</h2>
+			<ul class="menu-lista">
+				<li>
+					<a class="menu-enlace" th:href="@{/propiedad/listado}" th:text="#{home.menu.propiedades}">
+						Listado de Propiedades
+					</a>
+				</li>
+				<li>
+					<a class="menu-enlace" th:href="@{/contrato/listado}" th:text="#{home.menu.contratos}">
+						Listado de Contratos
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</main>
+</body>
+</html>

@@ -1,0 +1,94 @@
+body {
+	font-family: sans-serif;
+	margin: 0;
+	background-color: #f4f6f8;
+	color: #1f2933;
+}
+
+.pagina-inicio {
+	min-height: 100vh;
+}
+
+.encabezado {
+	background-color: #1e3a5f;
+	color: #ffffff;
+	padding: 32px 24px;
+	text-align: center;
+}
+
+.encabezado h1 {
+	margin: 0 0 8px;
+	font-size: 2.2rem;
+}
+
+.subtitulo {
+	margin: 0;
+	font-size: 1rem;
+	opacity: 0.9;
+}
+
+.contenido {
+	max-width: 720px;
+	margin: 32px auto;
+	padding: 0 16px;
+}
+
+.bienvenida {
+	background-color: #ffffff;
+	border: 1px solid #d9e2ec;
+	border-radius: 8px;
+	padding: 24px;
+	margin-bottom: 24px;
+}
+
+.bienvenida h2 {
+	margin-top: 0;
+}
+
+.menu-navegacion {
+	background-color: #ffffff;
+	border: 1px solid #d9e2ec;
+	border-radius: 8px;
+	padding: 24px;
+}
+
+.menu-titulo {
+	margin-top: 0;
+}
+
+.menu-lista {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.menu-lista li {
+	margin-bottom: 12px;
+}
+
+.menu-lista li:last-child {
+	margin-bottom: 0;
+}
+
+.menu-enlace {
+	display: block;
+	padding: 14px 16px;
+	border: 1px solid #bcccdc;
+	border-radius: 6px;
+	background-color: #f0f4f8;
+	color: #102a43;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.menu-enlace:hover {
+	background-color: #d9e2ec;
+}
+
+.mensaje-exito {
+	color: #1b5e20;
+}
+
+.mensaje-error {
+	color: #b00020;
+}
