@@ -13,7 +13,11 @@ public interface ContratoService {
 
 	void registrar(ContratoForm form);
 
+	void editar(Long id, ContratoForm form);
+
 	void eliminar(Long id);
+
+	Contrato obtenerPorId(Long id);
 
 	List<Propiedad> obtenerPropiedadesDisponibles();
 

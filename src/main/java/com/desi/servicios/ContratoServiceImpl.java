@@ -112,6 +112,112 @@ public class ContratoServiceImpl implements ContratoService {
 		return contratoRepository.filtrar(propiedadId, inquilinoId, estado, fechaInicio);
 	}
 
+	@Override
+	@Transactional
+	public void editar(Long id, ContratoForm form) {
+		validarCampos(form);
+
+		Contrato contrato = contratoRepository.buscarPorIdNoEliminado(id)
+				.orElseThrow(() -> new IllegalArgumentException("Contrato no encontrado"));
+
+		EstadoContrato nuevoEstado = form.getEstado();
+		if (nuevoEstado == null) {
+			nuevoEstado = contrato.getEstado();
+		}
+
+		validarCambioDeEstado(contrato.getEstado(), nuevoEstado);
+
+		Propiedad propiedad = propiedadRepository.buscarPorIdNoEliminada(form.getPropiedadId())
+				.orElseThrow(() -> new IllegalArgumentException("Propiedad no encontrada o eliminada"));
+
+		if (contrato.getEstado() != EstadoContrato.BORRADOR) {
+			if (!propiedad.getId().equals(contrato.getPropiedad().getId())) {
+				throw new IllegalArgumentException("No se puede cambiar la propiedad en contratos " + contrato.getEstado());
+			}
+		}
+
+		if (contrato.getEstado() != EstadoContrato.BORRADOR) {
+			if (!contrato.getFechaInicio().equals(form.getFechaInicio())) {
+				throw new IllegalArgumentException("No se puede cambiar la fecha de inicio en contratos " + contrato.getEstado());
+			}
+			if (!contrato.getInquilino().getId().equals(form.getInquilinoId())) {
+				throw new IllegalArgumentException("No se puede cambiar el inquilino en contratos " + contrato.getEstado());
+			}
+			if (!contrato.getDiaVencimientoMensual().equals(form.getDiaVencimientoMensual())) {
+				throw new IllegalArgumentException("No se puede cambiar el día de vencimiento en contratos " + contrato.getEstado());
+			}
+		}
+
+		if (nuevoEstado == EstadoContrato.ACTIVO && contrato.getEstado() != EstadoContrato.ACTIVO) {
+			validarActivacionContrato(propiedad);
+		}
+
+		EstadoContrato estadoAnterior = contrato.getEstado();
+
+		contrato.setPropiedad(propiedad);
+		contrato.setFechaInicio(form.getFechaInicio());
+		contrato.setDuracionMeses(form.getDuracionMeses());
+		contrato.setImporteMensual(form.getImporteMensual());
+		contrato.setDiaVencimientoMensual(form.getDiaVencimientoMensual());
+		contrato.setDescripcion(form.getDescripcion());
+		contrato.setInquilino(personaRepository.buscarActivaPorId(form.getInquilinoId())
+				.orElseThrow(() -> new IllegalArgumentException("Inquilino no encontrado o eliminado")));
+		contrato.setEstado(nuevoEstado);
+
+		if (nuevoEstado != estadoAnterior) {
+			HistorialEstadoContrato nuevoHistorial = new HistorialEstadoContrato();
+			nuevoHistorial.setEstado(nuevoEstado);
+			nuevoHistorial.setFechaHora(LocalDateTime.now());
+			nuevoHistorial.setContrato(contrato);
+			contrato.getHistorialEstados().add(nuevoHistorial);
+
+			if (nuevoEstado == EstadoContrato.ACTIVO) {
+				propiedad.setEstadoDisponibilidad(EstadoDisponibilidad.ALQUILADA);
+
+				HistorialEstadoPropiedad historialPropiedad = new HistorialEstadoPropiedad();
+				historialPropiedad.setEstado(EstadoDisponibilidad.ALQUILADA);
+				historialPropiedad.setFechaHora(LocalDateTime.now());
+				historialPropiedad.setPropiedad(propiedad);
+				propiedad.getHistorialEstados().add(historialPropiedad);
+			} else if (nuevoEstado == EstadoContrato.FINALIZADO || nuevoEstado == EstadoContrato.RESCINDIDO) {
+				propiedad.setEstadoDisponibilidad(EstadoDisponibilidad.DISPONIBLE);
+
+				HistorialEstadoPropiedad historialPropiedad = new HistorialEstadoPropiedad();
+				historialPropiedad.setEstado(EstadoDisponibilidad.DISPONIBLE);
+				historialPropiedad.setFechaHora(LocalDateTime.now());
+				historialPropiedad.setPropiedad(propiedad);
+				propiedad.getHistorialEstados().add(historialPropiedad);
+			}
+		}
+
+		contratoRepository.save(contrato);
+	}
+
+	@Override
+	public Contrato obtenerPorId(Long id) {
+		return contratoRepository.buscarPorIdNoEliminado(id)
+				.orElseThrow(() -> new IllegalArgumentException("Contrato no encontrado"));
+	}
+
+	private void validarCambioDeEstado(EstadoContrato estadoActual, EstadoContrato estadoNuevo) {
+		if (estadoActual == estadoNuevo) {
+			return;
+		}
+
+		boolean cambioValido = false;
+
+		if (estadoActual == EstadoContrato.BORRADOR && estadoNuevo == EstadoContrato.ACTIVO) {
+			cambioValido = true;
+		} else if (estadoActual == EstadoContrato.ACTIVO &&
+				   (estadoNuevo == EstadoContrato.FINALIZADO || estadoNuevo == EstadoContrato.RESCINDIDO)) {
+			cambioValido = true;
+		}
+
+		if (!cambioValido) {
+			throw new IllegalArgumentException("Cambio de estado no permitido: " + estadoActual + " -> " + estadoNuevo);
+		}
+	}
+
 	private void validarActivacionContrato(Propiedad propiedad) {
 		if (propiedad.getEstadoDisponibilidad() != EstadoDisponibilidad.DISPONIBLE) {
 			throw new IllegalArgumentException("No se puede crear un contrato activo si la propiedad no está disponible");
