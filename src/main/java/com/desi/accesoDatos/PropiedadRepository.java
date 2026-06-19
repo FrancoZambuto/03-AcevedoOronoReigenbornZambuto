@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import com.desi.entidades.Ciudad;
 import com.desi.entidades.EstadoDisponibilidad;
 import com.desi.entidades.Propiedad;
+import com.desi.entidades.TipoPropiedad;
 
 public interface PropiedadRepository extends JpaRepository<Propiedad, Long> {
 
@@ -49,4 +50,20 @@ public interface PropiedadRepository extends JpaRepository<Propiedad, Long> {
 		WHERE p.eliminada = false
 	""")
 	List<Propiedad> listarActivas();
+
+	@Query("""
+		SELECT p
+		FROM Propiedad p
+		WHERE p.eliminada = false
+		  AND (:direccion IS NULL OR :direccion = '' OR LOWER(p.direccion) LIKE LOWER(CONCAT('%', :direccion, '%')))
+		  AND (:ciudadId IS NULL OR p.ciudad.id = :ciudadId)
+		  AND (:tipo IS NULL OR p.tipo = :tipo)
+		  AND (:estado IS NULL OR p.estadoDisponibilidad = :estado)
+		ORDER BY p.id
+	""")
+	List<Propiedad> filtrarActivas(
+			@Param("direccion") String direccion,
+			@Param("ciudadId") Long ciudadId,
+			@Param("tipo") TipoPropiedad tipo,
+			@Param("estado") EstadoDisponibilidad estado);
 }

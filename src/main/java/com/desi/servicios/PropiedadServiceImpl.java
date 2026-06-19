@@ -18,6 +18,7 @@ import com.desi.entidades.Persona;
 import com.desi.entidades.Propiedad;
 import com.desi.excepciones.PropiedadConContratoActivoException;
 import com.desi.excepciones.PropiedadDuplicadaException;
+import com.desi.presentacion.PropiedadFiltroForm;
 import com.desi.presentacion.PropiedadForm;
 
 @Service
@@ -106,6 +107,19 @@ public class PropiedadServiceImpl implements PropiedadService {
 	@Override
 	public List<Propiedad> obtenerActivas() {
 		return propiedadRepository.listarActivas();
+	}
+
+	@Override
+	public List<Propiedad> buscarActivas(PropiedadFiltroForm filtro) {
+		String direccion = filtro.getDireccion();
+		if (direccion != null && direccion.isBlank()) {
+			direccion = null;
+		}
+		return propiedadRepository.filtrarActivas(
+				direccion,
+				filtro.getCiudadId(),
+				filtro.getTipo(),
+				filtro.getEstadoDisponibilidad());
 	}
 
 	@Override
