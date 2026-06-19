@@ -28,9 +28,11 @@ public class PropiedadController {
 	private PropiedadService propiedadService;
 
 	@GetMapping("/listado")
-	public String listado(Model model) {
-		model.addAttribute("propiedades", propiedadService.obtenerActivas());
-		return "listadoPropiedades";
+	public String listar(@ModelAttribute PropiedadFiltroForm filtro, Model model) {
+		model.addAttribute("filtro", filtro);
+		model.addAttribute("propiedades", propiedadService.buscarActivas(filtro));
+		cargarListas(model);
+		return "listarPropiedades";
 	}
 
 	@PostMapping("/{id}/eliminar")

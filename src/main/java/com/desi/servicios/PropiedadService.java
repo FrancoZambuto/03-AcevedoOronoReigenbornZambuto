@@ -5,6 +5,7 @@ import java.util.List;
 import com.desi.entidades.Ciudad;
 import com.desi.entidades.Persona;
 import com.desi.entidades.Propiedad;
+import com.desi.presentacion.PropiedadFiltroForm;
 import com.desi.presentacion.PropiedadForm;
 
 public interface PropiedadService {
@@ -14,6 +15,8 @@ public interface PropiedadService {
 	void eliminar(Long id);
 
 	List<Propiedad> obtenerActivas();
+
+	List<Propiedad> buscarActivas(PropiedadFiltroForm filtro);
 
 	List<Propiedad> obtenerTodasActivas();
 
