@@ -62,6 +62,60 @@ public class ContratoController {
 		return "listadoContratos";
 	}
 
+	@GetMapping("/{id}/editar")
+	public String preparaEdicionForm(@PathVariable Long id, Model model, @RequestParam(required = false) Boolean exito) {
+		Contrato contrato = contratoService.obtenerPorId(id);
+
+		ContratoForm form = new ContratoForm();
+		form.setPropiedadId(contrato.getPropiedad().getId());
+		form.setInquilinoId(contrato.getInquilino().getId());
+		form.setFechaInicio(contrato.getFechaInicio());
+		form.setDuracionMeses(contrato.getDuracionMeses());
+		form.setImporteMensual(contrato.getImporteMensual());
+		form.setDiaVencimientoMensual(contrato.getDiaVencimientoMensual());
+		form.setDescripcion(contrato.getDescripcion());
+		form.setEstado(contrato.getEstado());
+
+		model.addAttribute("contratoId", id);
+		model.addAttribute("contratoForm", form);
+		model.addAttribute("estadoActual", contrato.getEstado());
+
+		if (exito != null && exito) {
+			model.addAttribute("mensajeExito", true);
+		}
+
+		cargarListasEdicion(model, contrato);
+		return "editarContrato";
+	}
+
+	@PostMapping("/{id}/editar")
+	public String submitEdicion(@PathVariable Long id,
+								@Valid @ModelAttribute("contratoForm") ContratoForm contratoForm,
+								BindingResult result,
+								Model model) {
+
+		if (result.hasErrors()) {
+			Contrato contrato = contratoService.obtenerPorId(id);
+			model.addAttribute("contratoId", id);
+			model.addAttribute("estadoActual", contrato.getEstado());
+			cargarListasEdicion(model, contrato);
+			return "editarContrato";
+		}
+
+		try {
+			contratoService.editar(id, contratoForm);
+		} catch (IllegalArgumentException e) {
+			result.reject("contrato.error", e.getMessage());
+			Contrato contrato = contratoService.obtenerPorId(id);
+			model.addAttribute("contratoId", id);
+			model.addAttribute("estadoActual", contrato.getEstado());
+			cargarListasEdicion(model, contrato);
+			return "editarContrato";
+		}
+
+		return "redirect:/contrato/" + id + "/editar?exito=true";
+	}
+
 	@PostMapping("/{id}/eliminar")
 	public String eliminar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 		try {
@@ -104,6 +158,21 @@ public class ContratoController {
 		}
 
 		return "redirect:/contrato/alta?exito=true";
+	}
+
+	private void cargarListasEdicion(Model model, Contrato contrato) {
+		model.addAttribute("allPropiedades", propiedadService.obtenerTodasActivas());
+		model.addAttribute("allInquilinos", contratoService.obtenerInquilinos());
+
+		EstadoContrato[] estadosPermitidos;
+		if (contrato.getEstado() == EstadoContrato.BORRADOR) {
+			estadosPermitidos = new EstadoContrato[] { EstadoContrato.BORRADOR, EstadoContrato.ACTIVO };
+		} else if (contrato.getEstado() == EstadoContrato.ACTIVO) {
+			estadosPermitidos = new EstadoContrato[] { EstadoContrato.ACTIVO, EstadoContrato.FINALIZADO, EstadoContrato.RESCINDIDO };
+		} else {
+			estadosPermitidos = new EstadoContrato[] { contrato.getEstado() };
+		}
+		model.addAttribute("estadosContrato", estadosPermitidos);
 	}
 
 	private void cargarListas(Model model) {
