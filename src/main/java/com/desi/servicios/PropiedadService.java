@@ -14,6 +14,10 @@ public interface PropiedadService {
 
 	void eliminar(Long id);
 
+	PropiedadForm buscarParaEdicion(Long id);
+
+	void actualizar(Long id, PropiedadForm form);
+
 	List<Propiedad> obtenerActivas();
 
 	List<Propiedad> buscarActivas(PropiedadFiltroForm filtro);

@@ -27,6 +27,20 @@ public interface PropiedadRepository extends JpaRepository<Propiedad, Long> {
 	);
 
 	@Query("""
+		SELECT COUNT(p) > 0
+		FROM Propiedad p
+		WHERE p.direccion = :direccion
+		  AND p.ciudad = :ciudad
+		  AND p.eliminada = false
+		  AND p.id <> :id
+	""")
+	boolean existeActivaPorDireccionYCiudadExcluyendoId(
+			@Param("direccion") String direccion,
+			@Param("ciudad") Ciudad ciudad,
+			@Param("id") Long id
+	);
+
+	@Query("""
 		SELECT p
 		FROM Propiedad p
 		WHERE p.eliminada = false

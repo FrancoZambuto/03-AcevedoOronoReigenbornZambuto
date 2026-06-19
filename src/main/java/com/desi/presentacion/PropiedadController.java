@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.desi.entidades.EstadoDisponibilidad;
 import com.desi.entidades.TipoPropiedad;
+import com.desi.excepciones.EstadoPropiedadBloqueadoException;
 import com.desi.excepciones.PropiedadConContratoActivoException;
 import com.desi.excepciones.PropiedadDuplicadaException;
 import com.desi.servicios.PropiedadService;
@@ -79,6 +80,49 @@ public class PropiedadController {
 		}
 
 		return "redirect:/propiedad/alta?exito=true";
+	}
+
+	@GetMapping("/{id}/editar")
+	public String preparaEdicionForm(@PathVariable Long id, Model model, @RequestParam(required = false) Boolean exito) {
+		model.addAttribute("propiedadId", id);
+		model.addAttribute("propiedadForm", propiedadService.buscarParaEdicion(id));
+		if (exito != null && exito) {
+			model.addAttribute("mensajeExito", true);
+		}
+		cargarListas(model);
+		return "editarPropiedad";
+	}
+
+	@PostMapping("/{id}/editar")
+	public String submitEdicion(@PathVariable Long id, @Valid @ModelAttribute("propiedadForm") PropiedadForm propiedadForm,
+			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			model.addAttribute("propiedadId", id);
+			cargarListas(model);
+			return "editarPropiedad";
+		}
+
+		try {
+			propiedadService.actualizar(id, propiedadForm);
+		} catch (PropiedadDuplicadaException e) {
+			result.rejectValue("direccion", "propiedad.duplicada", e.getMessage());
+			model.addAttribute("propiedadId", id);
+			cargarListas(model);
+			return "editarPropiedad";
+		} catch (EstadoPropiedadBloqueadoException e) {
+			result.rejectValue("estadoDisponibilidad", "propiedad.estado.bloqueado", e.getMessage());
+			model.addAttribute("propiedadId", id);
+			cargarListas(model);
+			return "editarPropiedad";
+		} catch (IllegalArgumentException e) {
+			result.reject("propiedad.error", e.getMessage());
+			model.addAttribute("propiedadId", id);
+			cargarListas(model);
+			return "editarPropiedad";
+		}
+
+		redirectAttributes.addFlashAttribute("mensajeEdicionExito", true);
+		return "redirect:/propiedad/listado";
 	}
 
 	private void cargarListas(Model model) {
