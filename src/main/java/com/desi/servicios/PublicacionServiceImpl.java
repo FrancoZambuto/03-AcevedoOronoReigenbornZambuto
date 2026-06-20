@@ -16,6 +16,7 @@ import com.desi.entidades.HistorialEstadoPublicacion;
 import com.desi.entidades.Propiedad;
 import com.desi.entidades.Publicacion;
 import com.desi.excepciones.PublicacionActivaExistenteException;
+import com.desi.excepciones.PublicacionNoEliminableException;
 import com.desi.presentacion.PublicacionForm;
 
 @Service
@@ -65,6 +66,26 @@ public class PublicacionServiceImpl implements PublicacionService {
 		publicacion.getHistorialEstados().add(historial);
 
 		publicacionRepository.save(publicacion);
+	}
+
+	@Override
+	@Transactional
+	public void eliminar(Long id) {
+		Publicacion publicacion = publicacionRepository.buscarPorIdNoEliminada(id)
+				.orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada"));
+
+		if (publicacion.getEstado() != EstadoPublicacion.ACTIVA) {
+			throw new PublicacionNoEliminableException(
+					"Solo se pueden eliminar publicaciones en estado ACTIVA");
+		}
+
+		publicacion.setEliminada(true);
+		publicacionRepository.save(publicacion);
+	}
+
+	@Override
+	public List<Publicacion> listarNoEliminadas() {
+		return publicacionRepository.listarNoEliminadas();
 	}
 
 	@Override

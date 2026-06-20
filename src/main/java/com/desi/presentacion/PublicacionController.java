@@ -6,12 +6,15 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.desi.entidades.EstadoPublicacion;
 import com.desi.excepciones.PublicacionActivaExistenteException;
+import com.desi.excepciones.PublicacionNoEliminableException;
 import com.desi.servicios.PublicacionService;
 
 import jakarta.validation.Valid;
@@ -22,6 +25,25 @@ public class PublicacionController {
 
 	@Autowired
 	private PublicacionService publicacionService;
+
+	@GetMapping("/listado")
+	public String listar(Model model) {
+		model.addAttribute("publicaciones", publicacionService.listarNoEliminadas());
+		return "listarPublicaciones";
+	}
+
+	@PostMapping("/{id}/eliminar")
+	public String eliminar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+		try {
+			publicacionService.eliminar(id);
+			redirectAttributes.addFlashAttribute("mensajeExito", true);
+		} catch (PublicacionNoEliminableException e) {
+			redirectAttributes.addFlashAttribute("mensajeError", e.getMessage());
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute("mensajeError", e.getMessage());
+		}
+		return "redirect:/publicacion/listado";
+	}
 
 	@GetMapping("/alta")
 	public String preparaForm(Model model, @RequestParam(required = false) Boolean exito) {
