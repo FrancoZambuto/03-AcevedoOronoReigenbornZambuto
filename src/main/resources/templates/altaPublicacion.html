@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<title th:text="#{publicacion.alta.titulo}">Alta de Publicacion</title>
+	<style>
+		form .campo {
+			margin-bottom: 12px;
+		}
+
+		form .campo label {
+			display: block;
+			margin-bottom: 4px;
+		}
+
+		form .campo input,
+		form .campo select,
+		form .campo textarea {
+			display: block;
+		}
+
+		form .campo span {
+			display: block;
+			margin-top: 4px;
+			color: #b00020;
+		}
+
+		form button {
+			margin-top: 8px;
+		}
+	</style>
+</head>
+<body>
+	<h1 th:text="#{publicacion.alta.titulo}">Alta de Publicacion</h1>
+
+	<p th:if="${mensajeExito}" th:text="#{publicacion.alta.exito}"></p>
+
+	<form th:action="@{/publicacion/alta}" th:object="${publicacionForm}" method="post">
+
+		<div class="campo">
+			<label for="propiedadId" th:text="#{publicacion.propiedad}">Propiedad</label>
+			<select id="propiedadId" th:field="*{propiedadId}">
+				<option value="" th:text="#{publicacion.seleccionar}"></option>
+				<option th:each="p : ${propiedadesDisponibles}" th:value="${p.id}"
+					th:text="${p.direccion + ' - ' + p.ciudad.nombre}"></option>
+			</select>
+			<span th:if="${#fields.hasErrors('propiedadId')}" th:errors="*{propiedadId}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="precioMensual" th:text="#{publicacion.precioMensual}">Precio mensual</label>
+			<input type="number" step="0.01" min="0.01" id="precioMensual" th:field="*{precioMensual}"/>
+			<span th:if="${#fields.hasErrors('precioMensual')}" th:errors="*{precioMensual}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="condiciones" th:text="#{publicacion.condiciones}">Condiciones de alquiler</label>
+			<textarea id="condiciones" th:field="*{condiciones}" rows="4" cols="50"></textarea>
+			<span th:if="${#fields.hasErrors('condiciones')}" th:errors="*{condiciones}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="descripcion" th:text="#{publicacion.descripcion}">Descripcion</label>
+			<textarea id="descripcion" th:field="*{descripcion}" rows="4" cols="50"></textarea>
+			<span th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="fechaPublicacion" th:text="#{publicacion.fechaPublicacion}">Fecha de publicacion</label>
+			<input type="date" id="fechaPublicacion" th:field="*{fechaPublicacion}"/>
+			<span th:if="${#fields.hasErrors('fechaPublicacion')}" th:errors="*{fechaPublicacion}"></span>
+		</div>
+
+		<div class="campo">
+			<label for="estado" th:text="#{publicacion.estado}">Estado</label>
+			<select id="estado" th:field="*{estado}">
+				<option value="" th:text="#{publicacion.estado.default}"></option>
+				<option th:each="e : ${estadosPublicacion}" th:value="${e}" th:text="${e}"></option>
+			</select>
+			<span th:if="${#fields.hasErrors('estado')}" th:errors="*{estado}"></span>
+		</div>
+
+		<div th:if="${#fields.hasGlobalErrors()}">
+			<p th:each="e : ${#fields.globalErrors()}" th:text="${e}"></p>
+		</div>
+
+		<button type="submit" th:text="#{publicacion.submit}">Registrar Publicacion</button>
+	</form>
+
+	<p><a th:href="@{/}">Volver al inicio</a></p>
+</body>
+</html>

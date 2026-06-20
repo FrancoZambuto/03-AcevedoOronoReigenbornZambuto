@@ -1,0 +1,63 @@
+package com.desi.presentacion;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.desi.entidades.EstadoPublicacion;
+import com.desi.excepciones.PublicacionActivaExistenteException;
+import com.desi.servicios.PublicacionService;
+
+import jakarta.validation.Valid;
+
+@Controller
+@RequestMapping("/publicacion")
+public class PublicacionController {
+
+	@Autowired
+	private PublicacionService publicacionService;
+
+	@GetMapping("/alta")
+	public String preparaForm(Model model, @RequestParam(required = false) Boolean exito) {
+		model.addAttribute("publicacionForm", new PublicacionForm());
+		if (exito != null && exito) {
+			model.addAttribute("mensajeExito", true);
+		}
+		cargarListas(model);
+		return "altaPublicacion";
+	}
+
+	@PostMapping("/alta")
+	public String submit(@Valid @ModelAttribute("publicacionForm") PublicacionForm form,
+			BindingResult result, Model model) {
+		if (result.hasErrors()) {
+			cargarListas(model);
+			return "altaPublicacion";
+		}
+
+		try {
+			publicacionService.registrar(form);
+		} catch (PublicacionActivaExistenteException e) {
+			result.rejectValue("propiedadId", "publicacion.activa.existente", e.getMessage());
+			cargarListas(model);
+			return "altaPublicacion";
+		} catch (IllegalArgumentException e) {
+			result.reject("publicacion.error", e.getMessage());
+			cargarListas(model);
+			return "altaPublicacion";
+		}
+
+		return "redirect:/publicacion/alta?exito=true";
+	}
+
+	private void cargarListas(Model model) {
+		model.addAttribute("propiedadesDisponibles", publicacionService.obtenerPropiedadesDisponibles());
+		model.addAttribute("estadosPublicacion", EstadoPublicacion.values());
+	}
+}
