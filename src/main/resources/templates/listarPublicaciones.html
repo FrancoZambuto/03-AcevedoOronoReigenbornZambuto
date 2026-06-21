@@ -36,6 +36,7 @@
 	<h1 th:text="#{publicacion.listado.titulo}">Listado de Publicaciones</h1>
 
 	<p class="mensaje-exito" th:if="${mensajeExito}" th:text="#{publicacion.baja.exito}"></p>
+	<p class="mensaje-exito" th:if="${mensajeEdicionExito}" th:text="#{publicacion.editar.exito}"></p>
 	<p class="mensaje-error" th:if="${mensajeError}" th:text="${mensajeError}"></p>
 
 	<p><a th:href="@{/publicacion/alta}" th:text="#{publicacion.listado.nueva}">Nueva publicacion</a></p>
@@ -61,6 +62,9 @@
 				<td th:text="${pub.fechaPublicacion}"></td>
 				<td th:text="${pub.estado}"></td>
 				<td class="acciones">
+					<form th:action="@{/publicacion/{id}/editar(id=${pub.id})}" method="get">
+						<button type="submit" th:text="#{publicacion.listado.modificar}">Modificar</button>
+					</form>
 					<form th:action="@{/publicacion/{id}/eliminar(id=${pub.id})}" method="post">
 						<button type="submit" th:text="#{publicacion.baja.boton}"
 							onclick="return confirm('¿Confirma que desea eliminar esta publicacion?')">

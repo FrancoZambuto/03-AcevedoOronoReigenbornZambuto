@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.desi.entidades.EstadoPublicacion;
+import com.desi.entidades.Publicacion;
 import com.desi.excepciones.PublicacionActivaExistenteException;
 import com.desi.excepciones.PublicacionNoEliminableException;
 import com.desi.servicios.PublicacionService;
@@ -42,6 +43,55 @@ public class PublicacionController {
 		} catch (IllegalArgumentException e) {
 			redirectAttributes.addFlashAttribute("mensajeError", e.getMessage());
 		}
+		return "redirect:/publicacion/listado";
+	}
+
+	@GetMapping("/{id}/editar")
+	public String preparaEdicionForm(@PathVariable Long id, Model model,
+			@RequestParam(required = false) Boolean exito) {
+		Publicacion publicacion = publicacionService.buscarPorId(id);
+		model.addAttribute("publicacion", publicacion);
+		model.addAttribute("publicacionForm", publicacionService.buscarParaEdicion(id));
+		model.addAttribute("publicacionId", id);
+		String fechaStr = publicacion.getFechaPublicacion() != null
+				? publicacion.getFechaPublicacion().toString()
+				: "";
+		model.addAttribute("fechaPublicacionStr", fechaStr);
+		if (exito != null && exito) {
+			model.addAttribute("mensajeExito", true);
+		}
+		model.addAttribute("estadosPublicacion", EstadoPublicacion.values());
+		return "editarPublicacion";
+	}
+
+	@PostMapping("/{id}/editar")
+	public String submitEdicion(@PathVariable Long id,
+			@Valid @ModelAttribute("publicacionForm") PublicacionForm form,
+			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			model.addAttribute("publicacion", publicacionService.buscarPorId(id));
+			model.addAttribute("publicacionId", id);
+			model.addAttribute("estadosPublicacion", EstadoPublicacion.values());
+			return "editarPublicacion";
+		}
+
+		try {
+			publicacionService.actualizar(id, form);
+		} catch (PublicacionActivaExistenteException e) {
+			result.rejectValue("estado", "publicacion.activa.existente", e.getMessage());
+			model.addAttribute("publicacion", publicacionService.buscarPorId(id));
+			model.addAttribute("publicacionId", id);
+			model.addAttribute("estadosPublicacion", EstadoPublicacion.values());
+			return "editarPublicacion";
+		} catch (IllegalArgumentException e) {
+			result.reject("publicacion.error", e.getMessage());
+			model.addAttribute("publicacion", publicacionService.buscarPorId(id));
+			model.addAttribute("publicacionId", id);
+			model.addAttribute("estadosPublicacion", EstadoPublicacion.values());
+			return "editarPublicacion";
+		}
+
+		redirectAttributes.addFlashAttribute("mensajeEdicionExito", true);
 		return "redirect:/publicacion/listado";
 	}
 

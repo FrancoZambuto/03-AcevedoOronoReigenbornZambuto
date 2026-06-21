@@ -89,8 +89,94 @@ public class PublicacionServiceImpl implements PublicacionService {
 	}
 
 	@Override
+	public PublicacionForm buscarParaEdicion(Long id) {
+		Publicacion publicacion = publicacionRepository.buscarPorIdNoEliminada(id)
+				.orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada"));
+
+		PublicacionForm form = new PublicacionForm();
+		form.setPropiedadId(publicacion.getPropiedad().getId());
+		form.setPrecioMensual(publicacion.getPrecioMensual());
+		form.setCondiciones(publicacion.getCondiciones());
+		form.setDescripcion(publicacion.getDescripcion());
+		form.setFechaPublicacion(publicacion.getFechaPublicacion());
+		form.setEstado(publicacion.getEstado());
+		return form;
+	}
+
+	@Override
+	@Transactional
+	public void actualizar(Long id, PublicacionForm form) {
+		validarCamposEdicion(form);
+
+		Publicacion publicacion = publicacionRepository.buscarPorIdNoEliminada(id)
+				.orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada"));
+
+		if (publicacion.getEstado() == EstadoPublicacion.FINALIZADA
+				&& !publicacion.getCondiciones().equals(form.getCondiciones())) {
+			throw new IllegalArgumentException(
+					"No se pueden modificar las condiciones de una publicacion finalizada");
+		}
+
+		EstadoPublicacion nuevoEstado = form.getEstado();
+		if (nuevoEstado == null) {
+			nuevoEstado = publicacion.getEstado();
+		}
+
+		if (nuevoEstado == EstadoPublicacion.ACTIVA && publicacion.getEstado() != EstadoPublicacion.ACTIVA) {
+			Propiedad propiedad = publicacion.getPropiedad();
+			if (propiedad.getEstadoDisponibilidad() != EstadoDisponibilidad.DISPONIBLE) {
+				throw new IllegalArgumentException(
+						"Solo se puede activar una publicacion si la propiedad se encuentra disponible");
+			}
+			if (publicacionRepository.existePublicacionConEstadoParaPropiedad(propiedad.getId(), EstadoPublicacion.ACTIVA)) {
+				throw new PublicacionActivaExistenteException(
+						"Ya existe una publicacion activa para esta propiedad");
+			}
+		}
+
+		EstadoPublicacion estadoAnterior = publicacion.getEstado();
+
+		publicacion.setPrecioMensual(form.getPrecioMensual());
+		publicacion.setCondiciones(form.getCondiciones());
+		publicacion.setDescripcion(form.getDescripcion());
+		publicacion.setFechaPublicacion(form.getFechaPublicacion());
+		publicacion.setEstado(nuevoEstado);
+
+		if (!nuevoEstado.equals(estadoAnterior)) {
+			HistorialEstadoPublicacion historial = new HistorialEstadoPublicacion();
+			historial.setEstado(nuevoEstado);
+			historial.setFechaHora(LocalDateTime.now());
+			historial.setPublicacion(publicacion);
+			publicacion.getHistorialEstados().add(historial);
+		}
+
+		publicacionRepository.save(publicacion);
+	}
+
+	@Override
+	public Publicacion buscarPorId(Long id) {
+		return publicacionRepository.buscarPorIdNoEliminada(id)
+				.orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada"));
+	}
+
+	@Override
 	public List<Propiedad> obtenerPropiedadesDisponibles() {
 		return propiedadRepository.listarPorEstadoDisponibilidadNoEliminadas(EstadoDisponibilidad.DISPONIBLE);
+	}
+
+	private void validarCamposEdicion(PublicacionForm form) {
+		if (form.getPrecioMensual() == null || form.getPrecioMensual().compareTo(BigDecimal.ZERO) <= 0) {
+			throw new IllegalArgumentException("El precio mensual debe ser un numero positivo");
+		}
+		if (form.getCondiciones() == null || form.getCondiciones().isBlank()) {
+			throw new IllegalArgumentException("Las condiciones son obligatorias");
+		}
+		if (form.getDescripcion() == null || form.getDescripcion().isBlank()) {
+			throw new IllegalArgumentException("La descripcion es obligatoria");
+		}
+		if (form.getFechaPublicacion() == null) {
+			throw new IllegalArgumentException("La fecha de publicacion es obligatoria");
+		}
 	}
 
 	private void validarCampos(PublicacionForm form) {
