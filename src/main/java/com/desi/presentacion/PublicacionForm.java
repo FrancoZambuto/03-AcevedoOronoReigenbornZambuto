@@ -3,6 +3,8 @@ package com.desi.presentacion;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.desi.entidades.EstadoPublicacion;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -25,6 +27,7 @@ public class PublicacionForm {
 	private String descripcion;
 
 	@NotNull(message = "{publicacion.fechaPublicacion.notNull}")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate fechaPublicacion;
 
 	private EstadoPublicacion estado;
