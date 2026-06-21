@@ -28,8 +28,10 @@ public class PublicacionController {
 	private PublicacionService publicacionService;
 
 	@GetMapping("/listado")
-	public String listar(Model model) {
-		model.addAttribute("publicaciones", publicacionService.listarNoEliminadas());
+	public String listar(@ModelAttribute PublicacionFiltroForm filtro, Model model) {
+		model.addAttribute("filtro", filtro);
+		model.addAttribute("publicaciones", publicacionService.filtrar(filtro));
+		cargarListasFiltro(model);
 		return "listarPublicaciones";
 	}
 
@@ -130,6 +132,12 @@ public class PublicacionController {
 
 	private void cargarListas(Model model) {
 		model.addAttribute("propiedadesDisponibles", publicacionService.obtenerPropiedadesDisponibles());
+		model.addAttribute("estadosPublicacion", EstadoPublicacion.values());
+	}
+
+	private void cargarListasFiltro(Model model) {
+		model.addAttribute("allPropiedades", publicacionService.obtenerPropiedades());
+		model.addAttribute("allCiudades", publicacionService.obtenerCiudades());
 		model.addAttribute("estadosPublicacion", EstadoPublicacion.values());
 	}
 }

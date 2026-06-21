@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.desi.accesoDatos.CiudadRepository;
 import com.desi.accesoDatos.PropiedadRepository;
 import com.desi.accesoDatos.PublicacionRepository;
+import com.desi.entidades.Ciudad;
 import com.desi.entidades.EstadoDisponibilidad;
 import com.desi.entidades.EstadoPublicacion;
 import com.desi.entidades.HistorialEstadoPublicacion;
@@ -17,6 +19,7 @@ import com.desi.entidades.Propiedad;
 import com.desi.entidades.Publicacion;
 import com.desi.excepciones.PublicacionActivaExistenteException;
 import com.desi.excepciones.PublicacionNoEliminableException;
+import com.desi.presentacion.PublicacionFiltroForm;
 import com.desi.presentacion.PublicacionForm;
 
 @Service
@@ -27,6 +30,9 @@ public class PublicacionServiceImpl implements PublicacionService {
 
 	@Autowired
 	private PropiedadRepository propiedadRepository;
+
+	@Autowired
+	private CiudadRepository ciudadRepository;
 
 	@Override
 	@Transactional
@@ -160,8 +166,28 @@ public class PublicacionServiceImpl implements PublicacionService {
 	}
 
 	@Override
+	public List<Publicacion> filtrar(PublicacionFiltroForm filtro) {
+		return publicacionRepository.filtrar(
+				filtro.getPropiedadId(),
+				filtro.getCiudadId(),
+				filtro.getEstado(),
+				filtro.getPrecioMin(),
+				filtro.getPrecioMax());
+	}
+
+	@Override
 	public List<Propiedad> obtenerPropiedadesDisponibles() {
 		return propiedadRepository.listarPorEstadoDisponibilidadNoEliminadas(EstadoDisponibilidad.DISPONIBLE);
+	}
+
+	@Override
+	public List<Propiedad> obtenerPropiedades() {
+		return propiedadRepository.listarActivas();
+	}
+
+	@Override
+	public List<Ciudad> obtenerCiudades() {
+		return ciudadRepository.findAll();
 	}
 
 	private void validarCamposEdicion(PublicacionForm form) {
