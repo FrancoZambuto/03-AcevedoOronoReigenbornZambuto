@@ -21,6 +21,21 @@
 			<h2 class="menu-titulo" th:text="#{home.menu.titulo}">Navegacion</h2>
 			<ul class="menu-lista">
 				<li>
+					<a class="menu-enlace" th:href="@{/provinciasBuscar}" th:text="#{home.menu.provincias}">
+						Listado de Provincias
+					</a>
+				</li>
+				<li>
+					<a class="menu-enlace" th:href="@{/ciudadesBuscar}" th:text="#{home.menu.ciudades}">
+						Listado de Ciudades
+					</a>
+				</li>
+				<li>
+					<a class="menu-enlace" th:href="@{/personasBuscar}" th:text="#{home.menu.personas}">
+						Listado de Personas
+					</a>
+				</li>
+				<li>
 					<a class="menu-enlace" th:href="@{/propiedad/listado}" th:text="#{home.menu.propiedades}">
 						Listado de Propiedades
 					</a>

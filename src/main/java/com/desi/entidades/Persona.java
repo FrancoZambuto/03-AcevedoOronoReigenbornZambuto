@@ -3,12 +3,7 @@ package com.desi.entidades;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "PERSONA")
@@ -37,6 +32,9 @@ public class Persona {
 
 	@OneToMany(mappedBy = "inquilino")
 	private List<Contrato> contratos = new ArrayList<>();
+
+	@ManyToOne
+	private Ciudad ciudad;
 
 	public Persona() {
 	}
@@ -131,5 +129,11 @@ public class Persona {
 
 	public void setContratos(List<Contrato> contratos) {
 		this.contratos = contratos;
+	}
+	public Ciudad getCiudad() {
+		return ciudad;
+	}
+	public void setCiudad(Ciudad ciudad) {
+		this.ciudad = ciudad;
 	}
 }
