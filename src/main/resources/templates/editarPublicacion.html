@@ -76,8 +76,7 @@
 
 		<div class="campo">
 			<label for="fechaPublicacion" th:text="#{publicacion.fechaPublicacion}">Fecha de publicacion</label>
-			<input type="date" id="fechaPublicacion" name="fechaPublicacion"
-				   th:value="${fechaPublicacionStr}"/>
+			<input type="date" id="fechaPublicacion" th:field="*{fechaPublicacion}"/>
 			<span th:if="${#fields.hasErrors('fechaPublicacion')}" th:errors="*{fechaPublicacion}"></span>
 		</div>
 

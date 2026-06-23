@@ -34,3 +34,4 @@ build/
 
 ### Eclipse bin output ###
 src/bin/
+bin/
