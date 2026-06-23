@@ -55,10 +55,6 @@ public class PublicacionController {
 		model.addAttribute("publicacion", publicacion);
 		model.addAttribute("publicacionForm", publicacionService.buscarParaEdicion(id));
 		model.addAttribute("publicacionId", id);
-		String fechaStr = publicacion.getFechaPublicacion() != null
-				? publicacion.getFechaPublicacion().toString()
-				: "";
-		model.addAttribute("fechaPublicacionStr", fechaStr);
 		if (exito != null && exito) {
 			model.addAttribute("mensajeExito", true);
 		}

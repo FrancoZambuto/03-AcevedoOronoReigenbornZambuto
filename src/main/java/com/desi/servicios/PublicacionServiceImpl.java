@@ -117,10 +117,17 @@ public class PublicacionServiceImpl implements PublicacionService {
 		Publicacion publicacion = publicacionRepository.buscarPorIdNoEliminada(id)
 				.orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada"));
 
-		if (publicacion.getEstado() == EstadoPublicacion.FINALIZADA
-				&& !publicacion.getCondiciones().equals(form.getCondiciones())) {
-			throw new IllegalArgumentException(
-					"No se pueden modificar las condiciones de una publicacion finalizada");
+		if (publicacion.getEstado() == EstadoPublicacion.FINALIZADA) {
+			boolean datosModificados =
+					publicacion.getPrecioMensual().compareTo(form.getPrecioMensual()) != 0
+					|| !publicacion.getCondiciones().equals(form.getCondiciones())
+					|| !publicacion.getDescripcion().equals(form.getDescripcion())
+					|| !publicacion.getFechaPublicacion().equals(form.getFechaPublicacion());
+
+			if (form.getEstado() != EstadoPublicacion.ACTIVA || datosModificados) {
+				throw new IllegalArgumentException(
+						"Una publicacion finalizada solo puede reactivarse (cambiar a ACTIVA); sus datos no pueden modificarse");
+			}
 		}
 
 		EstadoPublicacion nuevoEstado = form.getEstado();
