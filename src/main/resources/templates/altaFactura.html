@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Alta de Factura</title>
+
+    <style>
+        form .campo {
+            margin-bottom: 12px;
+        }
+
+        form .campo label {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        form .campo input,
+        form .campo select,
+        form .campo textarea {
+            display: block;
+        }
+
+        form .campo span {
+            display: block;
+            margin-top: 4px;
+            color: #b00020;
+        }
+
+        form button {
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Alta de Factura</h1>
+
+<p th:if="${param.exito}">
+    Factura registrada correctamente
+</p>
+
+<form th:action="@{/factura/alta}" th:object="${facturaForm}" method="post">
+
+    <div class="campo">
+        <label for="contratoId">Contrato</label>
+
+        <select id="contratoId" th:field="*{contratoId}">
+            <option value="">Seleccione</option>
+
+            <option th:each="c : ${contratos}"
+                    th:value="${c.id}"
+                    th:text="${'Contrato #' + c.id}">
+            </option>
+        </select>
+
+        <span th:if="${#fields.hasErrors('contratoId')}"
+              th:errors="*{contratoId}">
+        </span>
+    </div>
+
+    <div class="campo">
+        <label for="conceptoFacturado">Concepto facturado</label>
+
+        <input type="text"
+               id="conceptoFacturado"
+               th:field="*{conceptoFacturado}"/>
+
+        <span th:if="${#fields.hasErrors('conceptoFacturado')}"
+              th:errors="*{conceptoFacturado}">
+        </span>
+    </div>
+
+    <div class="campo">
+        <label for="fechaEmision">Fecha emisión</label>
+
+        <input type="date"
+               id="fechaEmision"
+               th:field="*{fechaEmision}"/>
+
+        <span th:if="${#fields.hasErrors('fechaEmision')}"
+              th:errors="*{fechaEmision}">
+        </span>
+    </div>
+
+    <div class="campo">
+        <label for="fechaVencimiento">Fecha vencimiento</label>
+
+        <input type="date"
+               id="fechaVencimiento"
+               th:field="*{fechaVencimiento}"/>
+
+        <span th:if="${#fields.hasErrors('fechaVencimiento')}"
+              th:errors="*{fechaVencimiento}">
+        </span>
+    </div>
+
+    <div class="campo">
+        <label for="importe">Importe</label>
+
+        <input type="number"
+               step="0.01"
+               id="importe"
+               th:field="*{importe}"/>
+
+        <span th:if="${#fields.hasErrors('importe')}"
+              th:errors="*{importe}">
+        </span>
+    </div>
+
+    <div class="campo">
+        <label for="estado">Estado</label>
+
+        <select id="estado" th:field="*{estado}">
+            <option value="">Pendiente por defecto</option>
+
+            <option th:each="e : ${estadosFactura}"
+                    th:value="${e}"
+                    th:text="${e}">
+            </option>
+        </select>
+
+        <span th:if="${#fields.hasErrors('estado')}"
+              th:errors="*{estado}">
+        </span>
+    </div>
+
+    <div class="campo">
+        <label for="fechaPago">Fecha de pago</label>
+
+        <input type="date"
+               id="fechaPago"
+               th:field="*{fechaPago}"/>
+
+        <span th:if="${#fields.hasErrors('fechaPago')}"
+              th:errors="*{fechaPago}">
+        </span>
+    </div>
+
+    <div class="campo">
+        <label for="medio">Medio de pago</label>
+
+        <select id="medio" th:field="*{medio}">
+            <option value="">Seleccione</option>
+
+            <option th:each="m : ${mediosPago}"
+                    th:value="${m}"
+                    th:text="${m}">
+            </option>
+        </select>
+
+        <span th:if="${#fields.hasErrors('medio')}"
+              th:errors="*{medio}">
+        </span>
+    </div>
+
+    <div class="campo">
+        <label for="importePagado">Importe pagado</label>
+
+        <input type="number"
+               step="0.01"
+               id="importePagado"
+               th:field="*{importePagado}"/>
+
+        <span th:if="${#fields.hasErrors('importePagado')}"
+              th:errors="*{importePagado}">
+        </span>
+    </div>
+
+    <div class="campo">
+        <label for="interes">Interés pagado</label>
+
+        <input type="number"
+               step="0.01"
+               id="interes"
+               th:field="*{interes}"/>
+
+        <span th:if="${#fields.hasErrors('interes')}"
+              th:errors="*{interes}">
+        </span>
+    </div>
+
+    <div th:if="${#fields.hasGlobalErrors()}">
+        <p th:each="e : ${#fields.globalErrors()}"
+           th:text="${e}">
+        </p>
+    </div>
+
+    <button type="submit">
+        Registrar Factura
+    </button>
+
+</form>
+
+</body>
+</html>
