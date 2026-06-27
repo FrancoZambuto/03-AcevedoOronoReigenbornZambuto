@@ -50,7 +50,7 @@ public class Factura {
 	@JoinColumn(name = "contrato_id")
 	private Contrato contrato;
 
-	@OneToMany(mappedBy = "factura")
+	@OneToMany(mappedBy = "factura", cascade = jakarta.persistence.CascadeType.ALL)
 	private List<HistorialEstadoFactura> historialEstados = new ArrayList<>();
 
 	public Factura() {
