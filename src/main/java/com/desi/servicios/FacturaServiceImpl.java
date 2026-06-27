@@ -74,6 +74,109 @@ public class FacturaServiceImpl implements FacturaService {
         return facturaRepository.listarContratosActivos(EstadoContrato.ACTIVO);
     }
 
+    @Override
+    public Factura obtenerPorId(Long id) {
+        return facturaRepository.buscarPorIdNoEliminada(id)
+                .orElseThrow(() -> new IllegalArgumentException("Factura no encontrada"));
+    }
+
+    @Override
+    @Transactional
+    public void editar(Long id, FacturaForm form) {
+        validarCampos(form);
+
+        Factura factura = facturaRepository.buscarPorIdNoEliminada(id)
+                .orElseThrow(() -> new IllegalArgumentException("Factura no encontrada"));
+
+        if (factura.getEstado() == EstadoFactura.ANULADA) {
+            throw new IllegalArgumentException(
+                    "No se puede modificar una factura anulada");
+        }
+
+        if (factura.getEstado() == EstadoFactura.PAGADA) {
+            throw new IllegalArgumentException(
+                    "No se puede modificar una factura pagada");
+        }
+        Contrato contrato = factura.getContrato();
+
+        if (contrato.getEstado() != EstadoContrato.ACTIVO) {
+            throw new IllegalArgumentException(
+                    "Solo se pueden modificar facturas de contratos activos");
+        }
+
+        if (contrato.getEstado() != EstadoContrato.ACTIVO) {
+            throw new IllegalArgumentException("Solo se pueden asociar facturas a contratos activos");
+        }
+
+        EstadoFactura estadoAnterior = factura.getEstado();
+
+        EstadoFactura nuevoEstado = form.getEstado();
+        if (nuevoEstado == null) {
+            nuevoEstado = EstadoFactura.PENDIENTE;
+        }
+        if (estadoAnterior != nuevoEstado) {
+
+            boolean cambioValido =
+                    (estadoAnterior == EstadoFactura.PENDIENTE && nuevoEstado == EstadoFactura.PAGADA)
+                 || (estadoAnterior == EstadoFactura.PENDIENTE && nuevoEstado == EstadoFactura.VENCIDA)
+                 || (estadoAnterior == EstadoFactura.PENDIENTE && nuevoEstado == EstadoFactura.ANULADA)
+                 || (estadoAnterior == EstadoFactura.VENCIDA && nuevoEstado == EstadoFactura.PAGADA);
+
+            if (!cambioValido) {
+                throw new IllegalArgumentException(
+                        "El cambio de estado no es válido");
+            }
+        }
+        if (nuevoEstado == EstadoFactura.PAGADA) {
+
+            if (form.getFechaPago() == null) {
+                throw new IllegalArgumentException(
+                        "Debe ingresar la fecha de pago");
+            }
+
+            if (form.getMedio() == null) {
+                throw new IllegalArgumentException(
+                        "Debe ingresar el medio de pago");
+            }
+
+            if (form.getImportePagado() == null) {
+                throw new IllegalArgumentException(
+                        "Debe ingresar el importe pagado");
+            }
+        } else {
+
+            if (form.getFechaPago() != null
+                    || form.getMedio() != null
+                    || form.getImportePagado() != null
+                    || form.getInteres() != null) {
+
+                throw new IllegalArgumentException(
+                        "Solo se pueden registrar datos de pago para facturas pagadas");
+            }
+        }
+        
+        
+
+        factura.setConceptoFacturado(form.getConceptoFacturado());
+        factura.setFechaEmision(form.getFechaEmision());
+        factura.setFechaVencimiento(form.getFechaVencimiento());
+        factura.setImporte(form.getImporte());
+        factura.setEstado(nuevoEstado);
+        factura.setFechaPago(form.getFechaPago());
+        factura.setMedio(form.getMedio());
+        factura.setImportePagado(form.getImportePagado());
+        factura.setInteres(form.getInteres());
+
+        if (estadoAnterior != nuevoEstado) {
+            HistorialEstadoFactura historial = new HistorialEstadoFactura();
+            historial.setEstado(nuevoEstado);
+            historial.setFechaHora(LocalDateTime.now());
+            historial.setFactura(factura);
+            factura.getHistorialEstados().add(historial);
+        }
+
+        facturaRepository.save(factura);
+    }
     private void validarCampos(FacturaForm form) {
 
         if (form.getContratoId() == null) {
