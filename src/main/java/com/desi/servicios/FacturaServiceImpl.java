@@ -10,12 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.desi.accesoDatos.ContratoRepository;
 import com.desi.accesoDatos.FacturaRepository;
+import com.desi.accesoDatos.PropiedadRepository;
+import com.desi.accesoDatos.PersonaRepository;
 import com.desi.entidades.Contrato;
 import com.desi.entidades.EstadoContrato;
 import com.desi.entidades.EstadoFactura;
 import com.desi.entidades.Factura;
 import com.desi.entidades.HistorialEstadoFactura;
+import com.desi.entidades.Persona;
+import com.desi.entidades.Propiedad;
+import com.desi.presentacion.FacturaFiltroForm;
 import com.desi.presentacion.FacturaForm;
+
 
 @Service
 public class FacturaServiceImpl implements FacturaService {
@@ -25,7 +31,23 @@ public class FacturaServiceImpl implements FacturaService {
 
     @Autowired
     private ContratoRepository contratoRepository;
+    
+    @Autowired
+    private PropiedadRepository propiedadRepository;
 
+    @Autowired
+    private PersonaRepository personaRepository;
+
+    @Override
+    public List<Propiedad> obtenerPropiedades() {
+        return propiedadRepository.listarActivas();
+    }
+
+    @Override
+    public List<Persona> obtenerInquilinos() {
+        return personaRepository.listarActivas();
+    }
+    
     @Override
     @Transactional
     public void registrar(FacturaForm form) {
@@ -72,6 +94,22 @@ public class FacturaServiceImpl implements FacturaService {
     @Override
     public List<Contrato> obtenerContratosActivos() {
         return facturaRepository.listarContratosActivos(EstadoContrato.ACTIVO);
+    }
+    
+    @Override
+    public List<Factura> listarNoEliminadas() {
+        return facturaRepository.listarNoEliminadas();
+    }
+
+    @Override
+    public List<Factura> filtrar(FacturaFiltroForm filtro) {
+        return facturaRepository.filtrar(
+                filtro.getContratoId(),
+                filtro.getPropiedadId(),
+                filtro.getInquilinoId(),
+                filtro.getEstado(),
+                filtro.getFechaDesde(),
+                filtro.getFechaHasta());
     }
 
     @Override
