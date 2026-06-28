@@ -215,6 +215,24 @@ public class FacturaServiceImpl implements FacturaService {
 
         facturaRepository.save(factura);
     }
+    
+    @Override
+    @Transactional
+    public void eliminar(Long id) {
+
+        Factura factura = facturaRepository.buscarPorIdNoEliminada(id)
+                .orElseThrow(() -> new IllegalArgumentException("Factura no encontrada"));
+
+        if (factura.getEstado() == EstadoFactura.PAGADA) {
+            throw new IllegalArgumentException(
+                    "No se puede eliminar una factura pagada");
+        }
+
+        factura.setEliminada(true);
+
+        facturaRepository.save(factura);
+    }
+    
     private void validarCampos(FacturaForm form) {
 
         if (form.getContratoId() == null) {
