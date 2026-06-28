@@ -120,6 +120,26 @@ public class FacturaController {
         redirectAttributes.addFlashAttribute("mensajeExito", true);
         return "redirect:/factura/" + id + "/editar";
     }
+    
+    @PostMapping("/{id}/eliminar")
+    public String eliminar(@PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            facturaService.eliminar(id);
+            redirectAttributes.addFlashAttribute(
+                    "mensajeExito",
+                    "Factura eliminada correctamente");
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute(
+                    "mensajeError",
+                    e.getMessage());
+        }
+
+        return "redirect:/factura/listado";
+    }
+    
     private void cargarListas(Model model) {
         model.addAttribute("contratos", facturaService.obtenerContratosActivos());
         model.addAttribute("estadosFactura", EstadoFactura.values());

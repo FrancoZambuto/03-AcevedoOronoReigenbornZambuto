@@ -14,6 +14,8 @@ public interface FacturaService {
     void registrar(FacturaForm form);
 
     void editar(Long id, FacturaForm form);
+    
+    void eliminar(Long id);
 
     Factura obtenerPorId(Long id);
 

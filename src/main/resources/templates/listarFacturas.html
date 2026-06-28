@@ -8,6 +8,14 @@
 
 <h1>Listado de Facturas</h1>
 
+<p th:if="${mensajeExito}"
+   th:text="${mensajeExito}">
+</p>
+
+<p th:if="${mensajeError}"
+   th:text="${mensajeError}">
+</p>
+
 <form th:action="@{/factura/listado}"
       th:object="${filtro}"
       method="get">
