@@ -16,7 +16,6 @@ import com.desi.entidades.Factura;
 import com.desi.entidades.EstadoFactura;
 import com.desi.entidades.MedioPago;
 import com.desi.servicios.FacturaService;
-
 import jakarta.validation.Valid;
 
 @Controller
@@ -26,6 +25,17 @@ public class FacturaController {
     @Autowired
     private FacturaService facturaService;
 
+    @GetMapping("/listado")
+    public String listar(@ModelAttribute FacturaFiltroForm filtro, Model model) {
+
+        model.addAttribute("filtro", filtro);
+        model.addAttribute("facturas", facturaService.filtrar(filtro));
+
+        cargarListasFiltro(model);
+
+        return "listarFacturas";
+    }
+   
     @GetMapping("/alta")
     public String preparaForm(Model model) {
         model.addAttribute("facturaForm", new FacturaForm());
@@ -114,5 +124,12 @@ public class FacturaController {
         model.addAttribute("contratos", facturaService.obtenerContratosActivos());
         model.addAttribute("estadosFactura", EstadoFactura.values());
         model.addAttribute("mediosPago", MedioPago.values());
+    }
+    private void cargarListasFiltro(Model model) {
+
+        model.addAttribute("contratos", facturaService.obtenerContratosActivos());
+        model.addAttribute("propiedades", facturaService.obtenerPropiedades());
+        model.addAttribute("inquilinos", facturaService.obtenerInquilinos());
+        model.addAttribute("estadosFactura", EstadoFactura.values());
     }
 }
