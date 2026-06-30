@@ -3,147 +3,89 @@
 <head>
 	<meta charset="UTF-8"/>
 	<title th:text="#{propiedad.listado.titulo}">Listado de Propiedades</title>
-	<style>
-		body {
-			font-family: sans-serif;
-		}
-
-		.mensaje-exito {
-			color: #1b5e20;
-		}
-
-		.mensaje-error {
-			color: #b00020;
-		}
-
-		.filtros {
-			margin-bottom: 20px;
-			padding: 12px;
-			border: 1px solid #ddd;
-		}
-
-		.filtros .campo {
-			margin-bottom: 10px;
-		}
-
-		.filtros label {
-			display: block;
-			margin-bottom: 4px;
-		}
-
-		.filtros input,
-		.filtros select {
-			display: block;
-			min-width: 220px;
-		}
-
-		.filtros .botones {
-			margin-top: 12px;
-		}
-
-		.filtros .botones a {
-			margin-left: 12px;
-		}
-
-		table {
-			border-collapse: collapse;
-			margin-top: 16px;
-			width: 100%;
-		}
-
-		th, td {
-			border: 1px solid #ccc;
-			padding: 8px 12px;
-			text-align: left;
-		}
-
-		th {
-			background-color: #f5f5f5;
-		}
-
-		.acciones-fila form,
-		.acciones-fila a {
-			display: inline-block;
-			margin-right: 8px;
-		}
-	</style>
+	<link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
-<body>
-	<h1 th:text="#{propiedad.listado.titulo}">Listado de Propiedades</h1>
+<body class="pagina-secundaria">
+	<div th:replace="~{fragments/nav :: volver}"></div>
+	<div th:replace="~{fragments/nav :: cabecera(titulo=#{propiedad.listado.titulo})}"></div>
 
-	<p th:if="${mensajeExito}" class="mensaje-exito" th:text="#{propiedad.baja.exito}"></p>
-	<p th:if="${mensajeEdicionExito}" class="mensaje-exito" th:text="#{propiedad.editar.exito}"></p>
-	<p th:if="${mensajeError}" class="mensaje-error" th:text="${mensajeError}"></p>
+	<main class="contenido contenido-ancho">
+		<section class="tarjeta">
+			<p th:if="${mensajeExito}" class="mensaje-exito" th:text="#{propiedad.baja.exito}"></p>
+			<p th:if="${mensajeEdicionExito}" class="mensaje-exito" th:text="#{propiedad.editar.exito}"></p>
+			<p th:if="${mensajeError}" class="mensaje-error" th:text="${mensajeError}"></p>
 
-	<form class="filtros" th:action="@{/propiedad/listado}" th:object="${filtro}" method="get">
-		<div class="campo">
-			<label for="direccion" th:text="#{propiedad.direccion}">Direccion</label>
-			<input type="text" id="direccion" th:field="*{direccion}"/>
-		</div>
+			<form class="filtros" th:action="@{/propiedad/listado}" th:object="${filtro}" method="get">
+				<div class="campo">
+					<label for="direccion" th:text="#{propiedad.direccion}">Direccion</label>
+					<input type="text" id="direccion" th:field="*{direccion}"/>
+				</div>
 
-		<div class="campo">
-			<label for="ciudadId" th:text="#{propiedad.ciudad}">Ciudad</label>
-			<select id="ciudadId" th:field="*{ciudadId}">
-				<option value="" th:text="#{propiedad.filtro.todos}"></option>
-				<option th:each="c : ${allCiudades}" th:value="${c.id}" th:text="${c.nombre}"></option>
-			</select>
-		</div>
+				<div class="campo">
+					<label for="ciudadId" th:text="#{propiedad.ciudad}">Ciudad</label>
+					<select id="ciudadId" th:field="*{ciudadId}">
+						<option value="" th:text="#{propiedad.filtro.todos}"></option>
+						<option th:each="c : ${allCiudades}" th:value="${c.id}" th:text="${c.nombre}"></option>
+					</select>
+				</div>
 
-		<div class="campo">
-			<label for="tipo" th:text="#{propiedad.tipo}">Tipo de propiedad</label>
-			<select id="tipo" th:field="*{tipo}">
-				<option value="" th:text="#{propiedad.filtro.todos}"></option>
-				<option th:each="t : ${tiposPropiedad}" th:value="${t}" th:text="${t}"></option>
-			</select>
-		</div>
+				<div class="campo">
+					<label for="tipo" th:text="#{propiedad.tipo}">Tipo de propiedad</label>
+					<select id="tipo" th:field="*{tipo}">
+						<option value="" th:text="#{propiedad.filtro.todos}"></option>
+						<option th:each="t : ${tiposPropiedad}" th:value="${t}" th:text="${t}"></option>
+					</select>
+				</div>
 
-		<div class="campo">
-			<label for="estadoDisponibilidad" th:text="#{propiedad.estadoDisponibilidad}">Estado de disponibilidad</label>
-			<select id="estadoDisponibilidad" th:field="*{estadoDisponibilidad}">
-				<option value="" th:text="#{propiedad.filtro.todos}"></option>
-				<option th:each="e : ${estadosDisponibilidad}" th:value="${e}" th:text="${e}"></option>
-			</select>
-		</div>
+				<div class="campo">
+					<label for="estadoDisponibilidad" th:text="#{propiedad.estadoDisponibilidad}">Estado de disponibilidad</label>
+					<select id="estadoDisponibilidad" th:field="*{estadoDisponibilidad}">
+						<option value="" th:text="#{propiedad.filtro.todos}"></option>
+						<option th:each="e : ${estadosDisponibilidad}" th:value="${e}" th:text="${e}"></option>
+					</select>
+				</div>
 
-		<div class="botones">
-			<button type="submit" th:text="#{propiedad.filtro.buscar}">Buscar</button>
-			<a th:href="@{/propiedad/listado}" th:text="#{propiedad.filtro.limpiar}">Limpiar</a>
-			<a th:href="@{/propiedad/alta}" th:text="#{propiedad.listado.nueva}">Nueva propiedad</a>
-		</div>
-	</form>
+				<div class="botones">
+					<button type="submit" th:text="#{propiedad.filtro.buscar}">Buscar</button>
+					<a class="btn-secundario" th:href="@{/propiedad/listado}" th:text="#{propiedad.filtro.limpiar}">Limpiar</a>
+					<a class="btn-secundario" th:href="@{/propiedad/alta}" th:text="#{propiedad.listado.nueva}">Nueva propiedad</a>
+				</div>
+			</form>
 
-	<table>
-		<thead>
-			<tr>
-				<th th:text="#{propiedad.listado.id}">Id</th>
-				<th th:text="#{propiedad.direccion}">Direccion</th>
-				<th th:text="#{propiedad.ciudad}">Ciudad</th>
-				<th th:text="#{propiedad.tipo}">Tipo</th>
-				<th th:text="#{propiedad.cantidadAmbientes}">Cantidad de ambientes</th>
-				<th th:text="#{propiedad.metrosCuadrados}">Metros cuadrados</th>
-				<th th:text="#{propiedad.estadoDisponibilidad}">Estado</th>
-				<th th:text="#{propiedad.propietario}">Propietario</th>
-				<th th:text="#{propiedad.listado.acciones}">Acciones</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr th:each="p : ${propiedades}">
-				<td th:text="${p.id}"></td>
-				<td th:text="${p.direccion}"></td>
-				<td th:text="${p.ciudad.nombre}"></td>
-				<td th:text="${p.tipo}"></td>
-				<td th:text="${p.cantidadAmbientes}"></td>
-				<td th:text="${p.metrosCuadrados}"></td>
-				<td th:text="${p.estadoDisponibilidad}"></td>
-				<td th:text="${p.propietario.apellido + ', ' + p.propietario.nombre}"></td>
-				<td class="acciones-fila">
-					<a th:href="@{/propiedad/{id}/editar(id=${p.id})}" th:text="#{propiedad.listado.modificar}">Modificar</a>
-					<form th:action="@{/propiedad/{id}/eliminar(id=${p.id})}" method="post">
-						<button type="submit" th:text="#{propiedad.baja.boton}">Eliminar</button>
-					</form>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+			<table class="tabla-datos">
+				<thead>
+					<tr>
+						<th th:text="#{propiedad.listado.id}">Id</th>
+						<th th:text="#{propiedad.direccion}">Direccion</th>
+						<th th:text="#{propiedad.ciudad}">Ciudad</th>
+						<th th:text="#{propiedad.tipo}">Tipo</th>
+						<th th:text="#{propiedad.cantidadAmbientes}">Cantidad de ambientes</th>
+						<th th:text="#{propiedad.metrosCuadrados}">Metros cuadrados</th>
+						<th th:text="#{propiedad.estadoDisponibilidad}">Estado</th>
+						<th th:text="#{propiedad.propietario}">Propietario</th>
+						<th th:text="#{propiedad.listado.acciones}">Acciones</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="p : ${propiedades}">
+						<td th:text="${p.id}"></td>
+						<td th:text="${p.direccion}"></td>
+						<td th:text="${p.ciudad.nombre}"></td>
+						<td th:text="${p.tipo}"></td>
+						<td th:text="${p.cantidadAmbientes}"></td>
+						<td th:text="${p.metrosCuadrados}"></td>
+						<td th:text="${p.estadoDisponibilidad}"></td>
+						<td th:text="${p.propietario.apellido + ', ' + p.propietario.nombre}"></td>
+						<td class="acciones-fila">
+							<a th:href="@{/propiedad/{id}/editar(id=${p.id})}" th:text="#{propiedad.listado.modificar}">Modificar</a>
+							<form th:action="@{/propiedad/{id}/eliminar(id=${p.id})}" method="post">
+								<button type="submit" class="btn-eliminar" th:text="#{propiedad.baja.boton}">Eliminar</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+	</main>
 </body>
 </html>

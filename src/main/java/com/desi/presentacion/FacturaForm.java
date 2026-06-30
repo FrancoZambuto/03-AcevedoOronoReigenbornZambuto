@@ -18,7 +18,7 @@ public class FacturaForm {
     @NotEmpty(message = "El concepto facturado es obligatorio")
     private String conceptoFacturado;
 
-    @NotNull(message = "La fecha de emisión es obligatoria")
+    @NotNull(message = "La fecha de emision es obligatoria")
     private LocalDate fechaEmision;
 
     @NotNull(message = "La fecha de vencimiento es obligatoria")

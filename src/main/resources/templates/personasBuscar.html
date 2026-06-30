@@ -1,57 +1,49 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title><span th:text="#{persona.buscar.titulo}"></span></title>
+    <title th:text="#{persona.buscar.titulo}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
-<body>
-<div class="starter-template">
-    <h1><span th:text="#{empresa}"></span></h1>
-    <h2><span th:text="#{persona.buscar.titulo}"></span></h2>
-</div>
+<body class="pagina-secundaria">
+<div th:replace="~{fragments/nav :: volver}"></div>
+<div th:replace="~{fragments/nav :: cabecera(titulo=#{persona.buscar.titulo})}"></div>
+<main class="contenido contenido-ancho">
+<section class="tarjeta">
 
 <form th:action="@{/personasBuscar}" th:object="${formBean}" method="post">
-    <table border="1" style="align-self: center;">
-        <tr>
-            <td><label th:text="#{persona.dniCuit}"></label></td>
-            <td><input type="text" th:field="*{dniCuit}" /></td>
-        </tr>
-        <tr>
-            <td><label th:text="#{persona.nombre}"></label></td>
-            <td><input type="text" th:field="*{nombre}" /></td>
-        </tr>
-        <tr>
-            <td><label th:text="#{persona.ciudad}" /></td>
-            <td>
-                <select th:field="*{ciudadSeleccionada}">
-                    <option value="">Todas</option>
-                    <option th:each="c : ${allCiudades}"
-                            th:value="${c.id}"
-                            th:text="${c.nombre}"></option>
-                </select>
-            </td>
-        </tr>
-    </table>
+    <div class="campo">
+        <label th:text="#{persona.dniCuit}"></label>
+        <input type="text" th:field="*{dniCuit}" />
+    </div>
+    <div class="campo">
+        <label th:text="#{persona.nombre}"></label>
+        <input type="text" th:field="*{nombre}" />
+    </div>
+    <div class="campo">
+        <label th:text="#{persona.ciudad}"></label>
+        <select th:field="*{ciudadSeleccionada}">
+            <option value="">Todas</option>
+            <option th:each="c : ${allCiudades}" th:value="${c.id}" th:text="${c.nombre}"></option>
+        </select>
+    </div>
 
-    <table class="botones">
-        <tr>
-            <td><input type="submit" name="action" value="Buscar" /></td>
-            <td><input type="submit" name="action" value="Cancelar" /></td>
-            <td><input type="submit" name="action" value="Registrar" /></td>
-        </tr>
-    </table>
+    <div class="botones">
+        <button type="submit" name="action" value="Buscar">Buscar</button>
+        <button type="submit" name="action" value="Cancelar">Cancelar</button>
+        <button type="submit" name="action" value="Registrar">Registrar</button>
+    </div>
 
-    <table class="resultados" border="0" style="align-self: center;">
+    <table class="tabla-datos resultados">
         <thead>
         <tr>
-            <th><label th:text="#{persona.dniCuit}"></label></th>
-            <th><label th:text="#{persona.nombre}"></label></th>
-            <th><label th:text="#{persona.apellido}"></label></th>
-            <th><label th:text="#{persona.telefono}"></label></th>
-            <th><label th:text="#{persona.email}"></label></th>
-            <th><label th:text="#{persona.domicilio}"></label></th>
-            <th><label th:text="#{persona.ciudad}"></label></th>
+            <th th:text="#{persona.dniCuit}"></th>
+            <th th:text="#{persona.nombre}"></th>
+            <th th:text="#{persona.apellido}"></th>
+            <th th:text="#{persona.telefono}"></th>
+            <th th:text="#{persona.email}"></th>
+            <th th:text="#{persona.domicilio}"></th>
+            <th th:text="#{persona.ciudad}"></th>
             <th></th>
             <th></th>
         </tr>
@@ -65,21 +57,22 @@
             <td th:text="${p.email}"></td>
             <td th:text="${p.domicilio}"></td>
             <td th:text="${p.ciudad == null ? '' : p.ciudad.nombre}"></td>
-            <td>
-                <a th:href="@{/personasEditar/{id}(id=${p.id})}" class="btn btn-primary">editar</a>
+            <td class="acciones-fila">
+                <a th:href="@{/personasEditar/{id}(id=${p.id})}" th:text="#{links.editar}">editar</a>
             </td>
-            <td>
-                <button type="submit"
+            <td class="acciones-fila">
+                <button type="submit" class="btn-eliminar"
                         th:formaction="@{/personasEditar/delete/{id}(id=${p.id})}"
                         formmethod="post"
-                        class="btn btn-primary"
-                        onclick="return confirm('¿Estás seguro que deseas eliminar esta persona?');">
-                    eliminar
+                        th:text="#{links.eliminar}"
+                        onclick="return confirm('Estas seguro que deseas eliminar esta persona?');">
                 </button>
             </td>
         </tr>
         </tbody>
     </table>
 </form>
+</section>
+</main>
 </body>
 </html>

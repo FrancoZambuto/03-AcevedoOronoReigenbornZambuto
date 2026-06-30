@@ -2,42 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Editar Contrato</title>
-    <style>
-        form .campo {
-            margin-bottom: 12px;
-        }
-
-        form .campo label {
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        form .campo input,
-        form .campo select,
-        form .campo textarea {
-            display: block;
-        }
-
-        form .campo span {
-            display: block;
-            margin-top: 4px;
-            color: #b00020;
-        }
-
-        form button {
-            margin-top: 8px;
-        }
-
-        .readonly {
-            background-color: #f0f0f0;
-        }
-    </style>
+    <title th:text="#{contrato.editar.titulo}">Editar Contrato</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
-<body>
-<h1>Editar Contrato</h1>
-
-<p th:if="${mensajeExito}">Contrato actualizado correctamente</p>
+<body class="pagina-secundaria">
+<div th:replace="~{fragments/nav :: volver}"></div>
+<div th:replace="~{fragments/nav :: cabecera(titulo=#{contrato.editar.titulo})}"></div>
+<main class="contenido contenido-ancho">
+<section class="tarjeta">
+<p th:if="${mensajeExito}" class="mensaje-exito">Contrato actualizado correctamente</p>
 
 <form th:action="@{/contrato/{id}/editar(id=${contratoId})}" th:object="${contratoForm}" method="post">
 
@@ -78,7 +51,7 @@
     </div>
 
     <div class="campo">
-        <label for="duracionMeses">Duración en meses</label>
+        <label for="duracionMeses">Duracion en meses</label>
         <input type="number" id="duracionMeses" th:field="*{duracionMeses}"/>
         <span th:if="${#fields.hasErrors('duracionMeses')}" th:errors="*{duracionMeses}"></span>
     </div>
@@ -90,14 +63,14 @@
     </div>
 
     <div class="campo">
-        <label for="diaVencimientoMensual">Día de vencimiento mensual</label>
+        <label for="diaVencimientoMensual">Dia de vencimiento mensual</label>
         <input type="number" id="diaVencimientoMensual" th:field="*{diaVencimientoMensual}" th:readonly="${estadoActual.name() != 'BORRADOR'}" th:classappend="${estadoActual.name() != 'BORRADOR' ? 'readonly' : ''}"/>
         <span th:if="${#fields.hasErrors('diaVencimientoMensual')}" th:errors="*{diaVencimientoMensual}"></span>
-        <small th:if="${estadoActual.name() != 'BORRADOR'}">No se puede cambiar el día de vencimiento en contratos [[${estadoActual}]]</small>
+        <small th:if="${estadoActual.name() != 'BORRADOR'}">No se puede cambiar el dia de vencimiento en contratos [[${estadoActual}]]</small>
     </div>
 
     <div class="campo">
-        <label for="descripcion">Descripción</label>
+        <label for="descripcion">Descripcion</label>
         <textarea id="descripcion" th:field="*{descripcion}"></textarea>
         <span th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></span>
     </div>
@@ -115,7 +88,9 @@
     </div>
 
     <button type="submit">Actualizar Contrato</button>
-    <a href="/contrato/listado">Cancelar</a>
+    <a class="btn-secundario" th:href="@{/contrato/listado}">Cancelar</a>
 </form>
+</section>
+</main>
 </body>
 </html>

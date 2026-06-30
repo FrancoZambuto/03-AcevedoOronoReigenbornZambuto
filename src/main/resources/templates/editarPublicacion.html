@@ -3,42 +3,14 @@
 <head>
 	<meta charset="UTF-8"/>
 	<title th:text="#{publicacion.editar.titulo}">Modificar Publicacion</title>
-	<style>
-		form .campo {
-			margin-bottom: 12px;
-		}
-
-		form .campo label {
-			display: block;
-			margin-bottom: 4px;
-		}
-
-		form .campo input,
-		form .campo select,
-		form .campo textarea {
-			display: block;
-		}
-
-		form .campo span {
-			display: block;
-			margin-top: 4px;
-			color: #b00020;
-		}
-
-		form button {
-			margin-top: 8px;
-		}
-
-		.solo-lectura {
-			color: #555;
-			font-style: italic;
-		}
-	</style>
+	<link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
-<body>
-	<h1 th:text="#{publicacion.editar.titulo}">Modificar Publicacion</h1>
-
-	<p th:if="${mensajeExito}" th:text="#{publicacion.editar.exito}"></p>
+<body class="pagina-secundaria">
+	<div th:replace="~{fragments/nav :: volver}"></div>
+	<div th:replace="~{fragments/nav :: cabecera(titulo=#{publicacion.editar.titulo})}"></div>
+	<main class="contenido contenido-ancho">
+		<section class="tarjeta">
+	<p th:if="${mensajeExito}" class="mensaje-exito" th:text="#{publicacion.editar.exito}"></p>
 
 	<form th:action="@{/publicacion/{id}/editar(id=${publicacionId})}"
 		  th:object="${publicacionForm}" method="post">
@@ -95,6 +67,8 @@
 		<button type="submit" th:text="#{publicacion.editar.submit}">Guardar cambios</button>
 	</form>
 
-	<p><a th:href="@{/publicacion/listado}" th:text="#{publicacion.editar.volver}">Volver al listado</a></p>
+	<p><a class="btn-secundario" th:href="@{/publicacion/listado}" th:text="#{publicacion.editar.volver}">Volver al listado</a></p>
+		</section>
+	</main>
 </body>
 </html>

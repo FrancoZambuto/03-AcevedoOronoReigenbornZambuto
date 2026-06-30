@@ -59,7 +59,7 @@ public class FacturaServiceImpl implements FacturaService {
 
         if (contrato.getEstado() != EstadoContrato.ACTIVO) {
             throw new IllegalArgumentException(
-                    "No se puede crear una factura para un contrato que no esté activo");
+                    "No se puede crear una factura para un contrato que no este activo");
         }
 
         Factura factura = new Factura();
@@ -162,7 +162,7 @@ public class FacturaServiceImpl implements FacturaService {
 
             if (!cambioValido) {
                 throw new IllegalArgumentException(
-                        "El cambio de estado no es válido");
+                        "El cambio de estado no es valido");
             }
         }
         if (nuevoEstado == EstadoFactura.PAGADA) {
@@ -244,7 +244,7 @@ public class FacturaServiceImpl implements FacturaService {
         }
 
         if (form.getFechaEmision() == null) {
-            throw new IllegalArgumentException("La fecha de emisión es obligatoria");
+            throw new IllegalArgumentException("La fecha de emision es obligatoria");
         }
 
         if (form.getFechaVencimiento() == null) {
@@ -253,7 +253,7 @@ public class FacturaServiceImpl implements FacturaService {
 
         if (form.getFechaVencimiento().isBefore(form.getFechaEmision())) {
             throw new IllegalArgumentException(
-                    "La fecha de vencimiento debe ser igual o posterior a la fecha de emisión");
+                    "La fecha de vencimiento debe ser igual o posterior a la fecha de emision");
         }
 
         if (form.getImporte() == null
@@ -268,7 +268,7 @@ public class FacturaServiceImpl implements FacturaService {
 
         if (form.getInteres() != null
                 && form.getInteres().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("El interés pagado debe ser positivo");
+            throw new IllegalArgumentException("El interes pagado debe ser positivo");
         }
     }
 }
