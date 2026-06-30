@@ -19,15 +19,15 @@ public class PersonaForm {
     private String apellido;
 
     @NotBlank(message = "El DNI/CUIT es obligatorio")
-    @Pattern(regexp = "\\d{7,11}", message = "El DNI/CUIT debe contener entre 7 y 11 digitos")
+    @Pattern(regexp = "\\d{7,11}", message = "El DNI/CUIT debe contener entre 7 y 11 dígitos")
     private String dniCuit;
 
-    @NotBlank(message = "El telefono es obligatorio")
+    @NotBlank(message = "El teléfono es obligatorio")
     @Size(max = 30)
     private String telefono;
 
     @NotBlank(message = "El email es obligatorio")
-    @Email(message = "El email no tiene un formato valido")
+    @Email(message = "El email no tiene un formato válido")
     @Size(max = 150)
     private String email;
 

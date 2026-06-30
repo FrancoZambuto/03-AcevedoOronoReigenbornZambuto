@@ -144,7 +144,7 @@ public class ContratoServiceImpl implements ContratoService {
 				throw new IllegalArgumentException("No se puede cambiar el inquilino en contratos " + contrato.getEstado());
 			}
 			if (!contrato.getDiaVencimientoMensual().equals(form.getDiaVencimientoMensual())) {
-				throw new IllegalArgumentException("No se puede cambiar el dia de vencimiento en contratos " + contrato.getEstado());
+				throw new IllegalArgumentException("No se puede cambiar el día de vencimiento en contratos " + contrato.getEstado());
 			}
 		}
 
@@ -220,7 +220,7 @@ public class ContratoServiceImpl implements ContratoService {
 
 	private void validarActivacionContrato(Propiedad propiedad) {
 		if (propiedad.getEstadoDisponibilidad() != EstadoDisponibilidad.DISPONIBLE) {
-			throw new IllegalArgumentException("No se puede crear un contrato activo si la propiedad no esta disponible");
+			throw new IllegalArgumentException("No se puede crear un contrato activo si la propiedad no está disponible");
 		}
 
 		boolean existeContratoActivo = contratoRepository.tieneContratoActivo(propiedad.getId());
@@ -241,18 +241,18 @@ public class ContratoServiceImpl implements ContratoService {
 			throw new IllegalArgumentException("La fecha de inicio es obligatoria");
 		}
 		if (form.getDuracionMeses() == null || form.getDuracionMeses() <= 0) {
-			throw new IllegalArgumentException("La duracion en meses debe ser un numero positivo");
+			throw new IllegalArgumentException("La duración en meses debe ser un número positivo");
 		}
 		if (form.getImporteMensual() == null || form.getImporteMensual().compareTo(BigDecimal.ZERO) <= 0) {
-			throw new IllegalArgumentException("El importe mensual debe ser un numero positivo");
+			throw new IllegalArgumentException("El importe mensual debe ser un número positivo");
 		}
 		if (form.getDiaVencimientoMensual() == null
 				|| form.getDiaVencimientoMensual() < 1
 				|| form.getDiaVencimientoMensual() > 31) {
-			throw new IllegalArgumentException("El dia de vencimiento mensual debe estar entre 1 y 31");
+			throw new IllegalArgumentException("El día de vencimiento mensual debe estar entre 1 y 31");
 		}
 		if (form.getDescripcion() == null || form.getDescripcion().isBlank()) {
-			throw new IllegalArgumentException("La descripcion es obligatoria");
+			throw new IllegalArgumentException("La descripción es obligatoria");
 		}
 	}
 }

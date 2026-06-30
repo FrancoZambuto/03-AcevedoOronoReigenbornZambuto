@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="volver" class="barra-volver">
+		<button type="button" class="btn-volver" th:text="#{nav.volver}" onclick="history.back()">Volver</button>
+	</div>
+
+	<header th:fragment="cabecera (titulo)" class="encabezado encabezado-compacto">
+		<h1 th:text="#{home.titulo}">HogarYA</h1>
+		<p class="subtitulo" th:text="${titulo}"></p>
+	</header>
+</body>
+</html>

@@ -51,7 +51,7 @@
     </div>
 
     <div class="campo">
-        <label for="duracionMeses">Duracion en meses</label>
+        <label for="duracionMeses">Duración en meses</label>
         <input type="number" id="duracionMeses" th:field="*{duracionMeses}"/>
         <span th:if="${#fields.hasErrors('duracionMeses')}" th:errors="*{duracionMeses}"></span>
     </div>
@@ -63,14 +63,14 @@
     </div>
 
     <div class="campo">
-        <label for="diaVencimientoMensual">Dia de vencimiento mensual</label>
+        <label for="diaVencimientoMensual">Día de vencimiento mensual</label>
         <input type="number" id="diaVencimientoMensual" th:field="*{diaVencimientoMensual}" th:readonly="${estadoActual.name() != 'BORRADOR'}" th:classappend="${estadoActual.name() != 'BORRADOR' ? 'readonly' : ''}"/>
         <span th:if="${#fields.hasErrors('diaVencimientoMensual')}" th:errors="*{diaVencimientoMensual}"></span>
-        <small th:if="${estadoActual.name() != 'BORRADOR'}">No se puede cambiar el dia de vencimiento en contratos [[${estadoActual}]]</small>
+        <small th:if="${estadoActual.name() != 'BORRADOR'}">No se puede cambiar el día de vencimiento en contratos [[${estadoActual}]]</small>
     </div>
 
     <div class="campo">
-        <label for="descripcion">Descripcion</label>
+        <label for="descripcion">Descripción</label>
         <textarea id="descripcion" th:field="*{descripcion}"></textarea>
         <span th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></span>
     </div>
