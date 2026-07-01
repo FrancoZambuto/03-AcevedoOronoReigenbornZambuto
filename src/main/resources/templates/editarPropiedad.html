@@ -3,40 +3,13 @@
 <head>
 	<meta charset="UTF-8"/>
 	<title th:text="#{propiedad.editar.titulo}">Modificar Propiedad</title>
-	<style>
-		form .campo {
-			margin-bottom: 12px;
-		}
-
-		form .campo label {
-			display: block;
-			margin-bottom: 4px;
-		}
-
-		form .campo input,
-		form .campo select,
-		form .campo textarea {
-			display: block;
-		}
-
-		form .campo span {
-			display: block;
-			margin-top: 4px;
-			color: #b00020;
-		}
-
-		form .acciones {
-			margin-top: 12px;
-		}
-
-		form .acciones a {
-			margin-left: 12px;
-		}
-	</style>
+	<link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
-<body>
-	<h1 th:text="#{propiedad.editar.titulo}">Modificar Propiedad</h1>
-
+<body class="pagina-secundaria">
+	<div th:replace="~{fragments/nav :: volver}"></div>
+	<div th:replace="~{fragments/nav :: cabecera(titulo=#{propiedad.editar.titulo})}"></div>
+	<main class="contenido contenido-ancho">
+		<section class="tarjeta">
 	<p th:if="${mensajeExito}" class="mensaje-exito" th:text="#{propiedad.editar.exito}"></p>
 
 	<form th:action="@{/propiedad/{id}/editar(id=${propiedadId})}" th:object="${propiedadForm}" method="post">
@@ -122,5 +95,7 @@
 			<a th:href="@{/propiedad/listado}" th:text="#{propiedad.editar.volver}">Volver al listado</a>
 		</div>
 	</form>
+		</section>
+	</main>
 </body>
 </html>

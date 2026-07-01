@@ -1,79 +1,65 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title><span th:text="#{ciudad.buscar.titulo}"></span></title>
+    <title th:text="#{ciudad.buscar.titulo}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
-<body>
+<body class="pagina-secundaria">
+<div th:replace="~{fragments/nav :: volver}"></div>
+<div th:replace="~{fragments/nav :: cabecera(titulo=#{ciudad.buscar.titulo})}"></div>
+<main class="contenido contenido-ancho">
+<section class="tarjeta">
 
-<div class="starter-template">
-    <h1><span  th:text="#{empresa}" /></h1>
-    <h2>
-        <span th:text="#{ciudad.buscar.titulo}"></span>
-    </h2>
-</div>
-
-<form  th:action="@{/ciudadesBuscar}" th:object="${formBean}" method="post">
+<form th:action="@{/ciudadesBuscar}" th:object="${formBean}" method="post">
     <p th:each="err : ${#fields.errors('global')}" th:text="${err}" class="error" />
-    <table border="1" style="align-self: center;">
-        <tr>
-            <td><label th:text="#{ciudad.nombre}" /></td>
-            <td><input type="text" th:field="*{nombre}" /></td>
+    <div class="campo">
+        <label th:text="#{ciudad.nombre}"></label>
+        <input type="text" th:field="*{nombre}" />
+    </div>
+    <div class="campo">
+        <label th:text="#{ciudad.provincia}"></label>
+        <select th:field="*{provinciaSeleccionada}">
+            <option th:value="null" text="Seleccione una opcion"></option>
+            <option th:each="p : ${allProvincias}" th:value="${p.id}" th:text="${p.nombre}"></option>
+        </select>
+    </div>
 
-        </tr>
-        <tr>
-            <td><label th:text="#{ciudad.provincia}" /></td>
-            <td>
-                <select th:field="*{provinciaSeleccionada}">
-                    <option th:value="null" text="Seleccione una opción"></option>
-                    <option th:each="p : ${allProvincias}"
-                            th:value="${p.id}"
-                            th:text="${p.nombre}"></option>
-                </select>
-            </td>
-        </tr>
-    </table>
-    <table class="botones">
-        <tr>
-            <td><button type="submit" name="action" value="actionBuscar" th:text="#{botones.buscar}"/></td>
-            <td><button type="submit" name="action" value="actionCancelar" th:text="#{botones.cancelar}"/></td>
-            <td><button type="submit" name="action" value="actionRegistrar" th:text="#{botones.registrar}"/></td>
-        </tr>
-    </table>
-    <table  class="resultados" border="0" style="align-self: center;">
+    <div class="botones">
+        <button type="submit" name="action" value="actionBuscar" th:text="#{botones.buscar}"></button>
+        <button type="submit" name="action" value="actionCancelar" th:text="#{botones.cancelar}"></button>
+        <button type="submit" name="action" value="actionRegistrar" th:text="#{botones.registrar}"></button>
+    </div>
+
+    <table class="tabla-datos resultados">
         <thead>
         <tr>
-            <th ><label th:text="#{ciudad.nombre}" /></th>
-            <th ><label th:text="#{ciudad.provincia}" /></th>
-            <th ></th>
-            <th ></th>
+            <th th:text="#{ciudad.nombre}"></th>
+            <th th:text="#{ciudad.provincia}"></th>
+            <th></th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="p : ${resultados}">
-            <td th:text="${{p.nombre}}"></td>
-            <td th:text="${{p.provincia.nombre}}" ></td>
-            <td>
-                <a th:href="@{/ciudadEditar/{id}(id=${p.id})}"
-                   class="btn btn-primary"
-                   th:text="#{links.editar}" >
-                </a>
+            <td th:text="${p.nombre}"></td>
+            <td th:text="${p.provincia.nombre}"></td>
+            <td class="acciones-fila">
+                <a th:href="@{/ciudadEditar/{id}(id=${p.id})}" th:text="#{links.editar}"></a>
             </td>
-            <td>
-                <button type="submit"
+            <td class="acciones-fila">
+                <button type="submit" class="btn-eliminar"
                         th:formaction="@{/ciudadEditar/delete/{id}(id=${p.id})}"
                         formmethod="post"
-                        class="btn btn-primary"
                         th:text="#{links.eliminar}"
-                        onclick="return confirm('¿Estás seguro que deseas eliminar esta ciudad?');"
-                >
+                        onclick="return confirm('¿Estás seguro que deseas eliminar esta ciudad?');">
                 </button>
             </td>
-
         </tr>
         </tbody>
     </table>
 </form>
+</section>
+</main>
 </body>
 </html>

@@ -2,42 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Editar Contrato</title>
-    <style>
-        form .campo {
-            margin-bottom: 12px;
-        }
-
-        form .campo label {
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        form .campo input,
-        form .campo select,
-        form .campo textarea {
-            display: block;
-        }
-
-        form .campo span {
-            display: block;
-            margin-top: 4px;
-            color: #b00020;
-        }
-
-        form button {
-            margin-top: 8px;
-        }
-
-        .readonly {
-            background-color: #f0f0f0;
-        }
-    </style>
+    <title th:text="#{contrato.editar.titulo}">Editar Contrato</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
-<body>
-<h1>Editar Contrato</h1>
-
-<p th:if="${mensajeExito}">Contrato actualizado correctamente</p>
+<body class="pagina-secundaria">
+<div th:replace="~{fragments/nav :: volver}"></div>
+<div th:replace="~{fragments/nav :: cabecera(titulo=#{contrato.editar.titulo})}"></div>
+<main class="contenido contenido-ancho">
+<section class="tarjeta">
+<p th:if="${mensajeExito}" class="mensaje-exito">Contrato actualizado correctamente</p>
 
 <form th:action="@{/contrato/{id}/editar(id=${contratoId})}" th:object="${contratoForm}" method="post">
 
@@ -115,7 +88,9 @@
     </div>
 
     <button type="submit">Actualizar Contrato</button>
-    <a href="/contrato/listado">Cancelar</a>
+    <a class="btn-secundario" th:href="@{/contrato/listado}">Cancelar</a>
 </form>
+</section>
+</main>
 </body>
 </html>

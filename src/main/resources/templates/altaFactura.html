@@ -2,42 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Alta de Factura</title>
-
-    <style>
-        form .campo {
-            margin-bottom: 12px;
-        }
-
-        form .campo label {
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        form .campo input,
-        form .campo select,
-        form .campo textarea {
-            display: block;
-        }
-
-        form .campo span {
-            display: block;
-            margin-top: 4px;
-            color: #b00020;
-        }
-
-        form button {
-            margin-top: 8px;
-        }
-    </style>
+    <title th:text="#{factura.alta.titulo}">Alta de Factura</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
-<body>
-
-<h1>Alta de Factura</h1>
-
-<p th:if="${param.exito}">
-    Factura registrada correctamente
-</p>
+<body class="pagina-secundaria">
+<div th:replace="~{fragments/nav :: volver}"></div>
+<div th:replace="~{fragments/nav :: cabecera(titulo=#{factura.alta.titulo})}"></div>
+<main class="contenido contenido-ancho">
+<section class="tarjeta">
+<p th:if="${param.exito}" class="mensaje-exito">Factura registrada correctamente</p>
 
 <form th:action="@{/factura/alta}" th:object="${facturaForm}" method="post">
 
@@ -190,6 +163,7 @@
     </button>
 
 </form>
-
+</section>
+</main>
 </body>
 </html>

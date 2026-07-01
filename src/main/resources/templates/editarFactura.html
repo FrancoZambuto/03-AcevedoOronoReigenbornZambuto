@@ -2,42 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Editar factura</title>
-
-    <style>
-        form .campo {
-            margin-bottom: 12px;
-        }
-
-        form .campo label {
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        form .campo input,
-        form .campo select,
-        form .campo textarea {
-            display: block;
-        }
-
-        form .campo span {
-            display: block;
-            margin-top: 4px;
-            color: #b00020;
-        }
-
-        form button {
-            margin-top: 8px;
-        }
-    </style>
+    <title th:text="#{factura.editar.titulo}">Editar Factura</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
-<body>
-
-<h1>Editar factura</h1>
-
-<p th:if="${mensajeExito}">
-    Factura modificada correctamente
-</p>
+<body class="pagina-secundaria">
+<div th:replace="~{fragments/nav :: volver}"></div>
+<div th:replace="~{fragments/nav :: cabecera(titulo=#{factura.editar.titulo})}"></div>
+<main class="contenido contenido-ancho">
+<section class="tarjeta">
+<p th:if="${mensajeExito}" class="mensaje-exito">Factura modificada correctamente</p>
 
 <form th:action="@{/factura/{id}/editar(id=${facturaId})}" 
       th:object="${facturaForm}" 
@@ -185,6 +158,7 @@
     </button>
 
 </form>
-
+</section>
+</main>
 </body>
 </html>

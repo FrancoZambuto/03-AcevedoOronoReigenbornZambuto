@@ -3,37 +3,14 @@
 <head>
 	<meta charset="UTF-8"/>
 	<title th:text="#{propiedad.alta.titulo}">Alta de Propiedad</title>
-	<style>
-		form .campo {
-			margin-bottom: 12px;
-		}
-
-		form .campo label {
-			display: block;
-			margin-bottom: 4px;
-		}
-
-		form .campo input,
-		form .campo select,
-		form .campo textarea {
-			display: block;
-		}
-
-		form .campo span {
-			display: block;
-			margin-top: 4px;
-			color: #b00020;
-		}
-
-		form button {
-			margin-top: 8px;
-		}
-	</style>
+	<link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
-<body>
-	<h1 th:text="#{propiedad.alta.titulo}">Alta de Propiedad</h1>
-
-	<p th:if="${mensajeExito}" th:text="#{propiedad.alta.exito}"></p>
+<body class="pagina-secundaria">
+	<div th:replace="~{fragments/nav :: volver}"></div>
+	<div th:replace="~{fragments/nav :: cabecera(titulo=#{propiedad.alta.titulo})}"></div>
+	<main class="contenido contenido-ancho">
+		<section class="tarjeta">
+	<p th:if="${mensajeExito}" class="mensaje-exito" th:text="#{propiedad.alta.exito}"></p>
 
 	<form th:action="@{/propiedad/alta}" th:object="${propiedadForm}" method="post">
 
@@ -110,5 +87,7 @@
 
 		<button type="submit" th:text="#{propiedad.submit}">Registrar Propiedad</button>
 	</form>
+		</section>
+	</main>
 </body>
 </html>
